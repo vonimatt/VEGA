@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VEGA — Trefferfläche berechnen</title>
+  <title>VEGA — Abstrahlwinkel-Rechner</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
-      background: #f5f5f5;
+      background: #fff;
       color: #1a1a1a;
       min-height: 100vh;
       display: flex;
@@ -17,71 +17,62 @@
 
     /* ── HEADER ── */
     header {
-      background: #1a1a1a;
-      padding: 16px 24px;
+      background: #fff;
+      padding: 18px 24px;
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 24px;
+      border-bottom: 3px solid #FFDE00;
     }
-    .logo-svg { height: 28px; width: auto; }
-    .header-divider {
-      width: 1px; height: 28px; background: #444;
-    }
-    .header-title {
-      color: #fff; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.3px;
-    }
-
-    /* ── YELLOW ACCENT BAR ── */
-    .accent-bar {
-      height: 4px;
-      background: #FFDE00;
-    }
+    .logo-svg { height: 36px; width: auto; }
+    .header-divider { width: 2px; height: 32px; background: #e0e0e0; }
+    .header-title { color: #1a1a1a; font-size: 1rem; font-weight: 600; }
 
     /* ── MAIN ── */
     .container {
-      max-width: 760px; width: 100%;
-      margin: 0 auto; padding: 24px 20px;
-      flex: 1;
+      max-width: 800px; width: 100%;
+      margin: 0 auto; padding: 28px 20px; flex: 1;
     }
-
-    .page-title {
-      font-size: 1.6rem; font-weight: 700; color: #1a1a1a;
-      margin-bottom: 4px;
-    }
-    .page-subtitle {
-      font-size: 0.85rem; color: #666; margin-bottom: 24px;
-    }
+    .page-title { font-size: 1.5rem; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+    .page-subtitle { font-size: 0.85rem; color: #666; margin-bottom: 24px; }
 
     /* ── CARD ── */
     .card {
       background: #fff;
-      border-radius: 8px;
+      border-radius: 6px;
       padding: 24px;
       margin-bottom: 16px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      border: 1px solid #e8e8e8;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+      border: 1px solid #eee;
     }
     .card h2 {
       font-size: 0.72rem; font-weight: 700; color: #1a1a1a;
       text-transform: uppercase; letter-spacing: 1.5px;
-      margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #FFDE00;
-      display: inline-block;
+      margin-bottom: 16px; padding-bottom: 8px;
+      border-bottom: 3px solid #FFDE00; display: inline-block;
+    }
+
+    /* ── PRODUCT IMAGE ── */
+    .config-layout { display: flex; gap: 24px; align-items: flex-start; }
+    .config-controls { flex: 1; min-width: 0; }
+    .product-image-wrap {
+      width: 160px; min-width: 160px; height: 200px;
+      display: flex; align-items: center; justify-content: center;
+      background: #fafafa; border: 1px solid #eee; border-radius: 8px;
+      overflow: hidden;
+    }
+    .product-image-wrap img {
+      max-width: 140px; max-height: 180px; object-fit: contain;
+      transition: opacity 0.3s;
     }
 
     /* ── CONTROLS ── */
-    .control-row {
-      display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
-    }
+    .control-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
     .control-row:last-child { margin-bottom: 0; }
-    .control-label {
-      min-width: 100px; font-size: 0.82rem; font-weight: 600; color: #555;
-    }
-
+    .control-label { min-width: 100px; font-size: 0.82rem; font-weight: 600; color: #555; }
     select {
       flex: 1; padding: 10px 36px 10px 14px;
-      border: 2px solid #ddd; border-radius: 6px;
+      border: 1px solid #ccc; border-radius: 4px;
       background: #fff; color: #1a1a1a;
       font-size: 0.85rem; font-weight: 500;
       cursor: pointer; outline: none; transition: border-color 0.2s;
@@ -89,73 +80,66 @@
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='2' fill='none'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 12px center;
     }
-    select:focus { border-color: #FFDE00; }
-    select:hover { border-color: #bbb; }
+    select:focus { border-color: #FFDE00; box-shadow: 0 0 0 2px rgba(255,222,0,0.25); }
 
     .slider-wrap { flex: 1; display: flex; align-items: center; gap: 12px; }
     input[type="range"] {
-      flex: 1; -webkit-appearance: none; height: 5px; border-radius: 3px;
+      flex: 1; -webkit-appearance: none; height: 4px; border-radius: 2px;
       background: #e0e0e0; outline: none;
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
-      background: #FFDE00; border: 3px solid #1a1a1a; cursor: pointer;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      background: #FFDE00; border: 2px solid #1a1a1a; cursor: pointer;
     }
     input[type="range"]::-moz-range-thumb {
       width: 20px; height: 20px; border-radius: 50%;
-      background: #FFDE00; border: 3px solid #1a1a1a; cursor: pointer;
+      background: #FFDE00; border: 2px solid #1a1a1a; cursor: pointer;
     }
     .dist-input {
-      width: 76px; padding: 8px 10px;
-      border: 2px solid #ddd; border-radius: 6px;
+      width: 72px; padding: 8px 10px;
+      border: 1px solid #ccc; border-radius: 4px;
       background: #fff; color: #1a1a1a;
       font-size: 0.9rem; font-weight: 700; text-align: center; outline: none;
     }
-    .dist-input:focus { border-color: #FFDE00; }
+    .dist-input:focus { border-color: #FFDE00; box-shadow: 0 0 0 2px rgba(255,222,0,0.25); }
     .unit-label { font-size: 0.82rem; color: #888; font-weight: 600; }
 
-    /* Info badges */
     .info-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
     .info-badge {
       display: flex; align-items: center; gap: 5px;
-      background: #fafafa; border: 1px solid #e8e8e8;
-      border-radius: 6px; padding: 5px 10px;
-      font-size: 0.73rem; color: #777;
+      background: #f7f7f7; border: 1px solid #eee;
+      border-radius: 4px; padding: 5px 10px; font-size: 0.73rem; color: #777;
     }
     .info-badge strong { color: #1a1a1a; }
 
     /* ── RESULTS ── */
     .results-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
     .result-box {
-      background: #fafafa; border: 1px solid #e8e8e8; border-radius: 8px;
-      padding: 16px; text-align: center; transition: all 0.3s;
+      background: #f9f9f9; border: 1px solid #eee; border-radius: 6px;
+      padding: 16px; text-align: center;
     }
     .result-box.accent {
       border-color: #FFDE00; background: #fffde6;
-      box-shadow: 0 0 0 1px #FFDE00;
+      box-shadow: inset 0 -3px 0 #FFDE00;
     }
     .result-label {
       font-size: 0.68rem; color: #888; text-transform: uppercase;
       letter-spacing: 0.8px; margin-bottom: 6px; font-weight: 700;
     }
     .result-value { font-size: 1.5rem; font-weight: 800; color: #1a1a1a; }
-    .result-value .unit-sm {
-      font-size: 0.6rem; font-weight: 500; color: #999; margin-left: 2px;
-    }
+    .result-value .unit-sm { font-size: 0.6rem; font-weight: 500; color: #999; margin-left: 2px; }
     .result-box.accent .result-value { color: #b8a000; }
 
-    /* Warning */
     .warning-note {
       display: flex; align-items: center; gap: 8px;
       padding: 10px 14px; background: #fffde6;
-      border: 1px solid #ffe082; border-radius: 6px;
+      border: 1px solid #ffe082; border-radius: 4px;
       font-size: 0.72rem; color: #8d7600; margin-top: 14px;
     }
 
-    /* ── VISUALIZATION ── */
+    /* ── VIZ ── */
     .viz-wrap {
-      background: #1a1a1a; border-radius: 8px;
+      background: #1a1a1a; border-radius: 6px;
       padding: 12px; display: flex; justify-content: center;
     }
     svg text {
@@ -164,85 +148,91 @@
 
     /* ── FOOTER ── */
     footer {
-      background: #1a1a1a; color: #999; padding: 28px 24px;
-      margin-top: auto;
+      background: #f0f0f0; border-top: 1px solid #ddd;
+      color: #666; padding: 28px 24px; margin-top: auto;
     }
     .footer-inner {
-      max-width: 760px; margin: 0 auto;
+      max-width: 800px; margin: 0 auto;
       display: flex; justify-content: space-between; align-items: flex-start;
       flex-wrap: wrap; gap: 20px;
     }
-    .footer-logo { height: 22px; opacity: 0.7; }
-    .footer-address { font-size: 0.72rem; line-height: 1.7; color: #888; }
-    .footer-address strong { color: #ccc; }
+    .footer-logo { height: 26px; }
+    .footer-address { font-size: 0.75rem; line-height: 1.7; color: #666; }
+    .footer-address strong { color: #333; }
     .footer-copy {
-      font-size: 0.65rem; color: #555; width: 100%;
-      border-top: 1px solid #333; padding-top: 14px; margin-top: 8px;
+      font-size: 0.65rem; color: #999; width: 100%;
+      border-top: 1px solid #ddd; padding-top: 14px; margin-top: 8px;
     }
 
-    @media (max-width: 520px) {
+    @media (max-width: 600px) {
       .results-grid { grid-template-columns: 1fr; }
       .control-row { flex-wrap: wrap; }
       .control-label { min-width: 100%; margin-bottom: 4px; }
       .footer-inner { flex-direction: column; }
-      header { flex-wrap: wrap; }
+      .config-layout { flex-direction: column; }
+      .product-image-wrap { width: 100%; height: 140px; }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <!-- VEGA Logo SVG inline -->
   <svg class="logo-svg" viewBox="0 0 204 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g clip-path="url(#c)">
+    <g clip-path="url(#lc)">
       <path d="M0.193 0.193h9.251l10.307 21.133L30.06 0.193H64.76v6.613H45.076v5.669h13.386v5.984H45.076v6.143h20.473v7.086H36.098V6.78L23.949 31.689h-8.395L0.193 0.193zm133.858 31.496h-8.569l-3.044-7.087H107.242l-3.044 7.087H67.596V0.193h28.975v6.613H76.571v17.796h13.387v-6.143h-7.087v-5.984h14.173v15.914l12.116-28.198h11.362l13.531 31.496h-.002zm-14.082-13.229l-5.131-11.942-5.131 11.942h10.262z" fill="#FFDE00"/>
-      <path d="M141.771 9.847v3.204h3.38V9.847h1.836V18.2h-1.836v-3.602h-3.38V18.2h-1.835V9.847h1.835z" fill="white"/>
-      <path d="M156.453 14.058c0 2.433-1.555 4.34-4.106 4.34s-4.107-1.907-4.107-4.34c0-2.434 1.544-4.411 4.107-4.411s4.106 1.884 4.106 4.411zm-4.106 2.795c1.555 0 2.269-1.275 2.269-2.795 0-1.602-.714-2.867-2.28-2.867s-2.258 1.251-2.258 2.867c0 1.615.738 2.795 2.269 2.795z" fill="white"/>
-      <path d="M160.291 9.847l1.954 5.744h.024l1.849-5.744h2.584V18.2h-1.72v-5.92h-.024l-2.047 5.92h-1.415l-2.047-5.86h-.024V18.2h-1.72V9.847h2.584z" fill="white"/>
-      <path d="M174.565 9.847v1.544h-4.412v1.789h4.047v1.427h-4.047v2.047h4.505v1.544h-6.34V9.845h6.247v.002z" fill="white"/>
-      <path d="M147.782 27.547c0 2.433-1.555 4.34-4.106 4.34s-4.107-1.907-4.107-4.34c0-2.434 1.544-4.411 4.107-4.411s4.106 1.882 4.106 4.411zm-4.106 2.795c1.555 0 2.268-1.276 2.268-2.795 0-1.603-.713-2.867-2.28-2.867-1.566 0-2.257 1.251-2.257 2.867 0 1.616.738 2.795 2.269 2.795z" fill="white"/>
-      <path d="M154.909 23.336v1.544h-4.036v1.931h3.498v1.427h-3.498v3.451h-1.835v-8.353h5.873-.002z" fill="white"/>
-      <path d="M160.222 23.336l1.86 5.873h.022l1.885-5.873h1.895l-2.773 8.353h-2.071l-2.713-8.353h1.895z" fill="white"/>
-      <path d="M170.34 23.336l3.124 8.353h-1.906l-.631-1.86h-3.123l-.655 1.86h-1.86l3.171-8.353h1.884-.004zm-.971 2.057l-1.089 3.065h2.164l-1.053-3.065h-.024.002z" fill="white"/>
-      <path d="M176.027 23.336v6.809h4.071v1.544h-5.907v-8.353h1.836z" fill="white"/>
-      <path d="M182.58 23.336v5.229c0 1.228.538 1.777 1.72 1.777 1.287 0 1.731-.549 1.731-1.777v-5.229h1.838v5.229c0 2.082-1.204 3.322-3.569 3.322s-3.555-1.24-3.555-3.322v-5.229h1.835z" fill="white"/>
-      <path d="M195.696 23.336v1.544h-4.411v1.789h4.046v1.427h-4.046v2.046h4.503v1.544h-6.339v-8.353h6.247v.003z" fill="white"/>
-      <path d="M203.253 25.827h-1.777c-.058-.842-.549-1.264-1.638-1.264-.678 0-1.276.293-1.276.946 0 .609.351.725 2.222 1.194 1.24.315 2.749.738 2.749 2.504 0 1.58-1.251 2.678-3.473 2.678-1.767 0-3.556-.842-3.556-2.913v-.058h1.778c0 1.182.971 1.545 1.838 1.545s1.638-.28 1.638-1.042c0-.527-.409-.853-1.44-1.111a18 18 0 0 1-1.696-.456c-1.264-.422-1.838-1.136-1.838-2.2 0-1.684 1.592-2.516 3.125-2.516 1.789 0 3.347.796 3.347 2.691l-.003.002z" fill="white"/>
+      <path d="M141.771 9.847v3.204h3.38V9.847h1.836V18.2h-1.836v-3.602h-3.38V18.2h-1.835V9.847h1.835z" fill="#1a1a1a"/>
+      <path d="M156.453 14.058c0 2.433-1.555 4.34-4.106 4.34s-4.107-1.907-4.107-4.34c0-2.434 1.544-4.411 4.107-4.411s4.106 1.884 4.106 4.411zm-4.106 2.795c1.555 0 2.269-1.275 2.269-2.795 0-1.602-.714-2.867-2.28-2.867s-2.258 1.251-2.258 2.867c0 1.615.738 2.795 2.269 2.795z" fill="#1a1a1a"/>
+      <path d="M160.291 9.847l1.954 5.744h.024l1.849-5.744h2.584V18.2h-1.72v-5.92h-.024l-2.047 5.92h-1.415l-2.047-5.86h-.024V18.2h-1.72V9.847h2.584z" fill="#1a1a1a"/>
+      <path d="M174.565 9.847v1.544h-4.412v1.789h4.047v1.427h-4.047v2.047h4.505v1.544h-6.34V9.845h6.247v.002z" fill="#1a1a1a"/>
+      <path d="M147.782 27.547c0 2.433-1.555 4.34-4.106 4.34s-4.107-1.907-4.107-4.34c0-2.434 1.544-4.411 4.107-4.411s4.106 1.882 4.106 4.411zm-4.106 2.795c1.555 0 2.268-1.276 2.268-2.795 0-1.603-.713-2.867-2.28-2.867-1.566 0-2.257 1.251-2.257 2.867 0 1.616.738 2.795 2.269 2.795z" fill="#1a1a1a"/>
+      <path d="M154.909 23.336v1.544h-4.036v1.931h3.498v1.427h-3.498v3.451h-1.835v-8.353h5.873-.002z" fill="#1a1a1a"/>
+      <path d="M160.222 23.336l1.86 5.873h.022l1.885-5.873h1.895l-2.773 8.353h-2.071l-2.713-8.353h1.895z" fill="#1a1a1a"/>
+      <path d="M170.34 23.336l3.124 8.353h-1.906l-.631-1.86h-3.123l-.655 1.86h-1.86l3.171-8.353h1.884-.004zm-.971 2.057l-1.089 3.065h2.164l-1.053-3.065h-.024.002z" fill="#1a1a1a"/>
+      <path d="M176.027 23.336v6.809h4.071v1.544h-5.907v-8.353h1.836z" fill="#1a1a1a"/>
+      <path d="M182.58 23.336v5.229c0 1.228.538 1.777 1.72 1.777 1.287 0 1.731-.549 1.731-1.777v-5.229h1.838v5.229c0 2.082-1.204 3.322-3.569 3.322s-3.555-1.24-3.555-3.322v-5.229h1.835z" fill="#1a1a1a"/>
+      <path d="M195.696 23.336v1.544h-4.411v1.789h4.046v1.427h-4.046v2.046h4.503v1.544h-6.339v-8.353h6.247v.003z" fill="#1a1a1a"/>
+      <path d="M203.253 25.827h-1.777c-.058-.842-.549-1.264-1.638-1.264-.678 0-1.276.293-1.276.946 0 .609.351.725 2.222 1.194 1.24.315 2.749.738 2.749 2.504 0 1.58-1.251 2.678-3.473 2.678-1.767 0-3.556-.842-3.556-2.913v-.058h1.778c0 1.182.971 1.545 1.838 1.545s1.638-.28 1.638-1.042c0-.527-.409-.853-1.44-1.111a18 18 0 0 1-1.696-.456c-1.264-.422-1.838-1.136-1.838-2.2 0-1.684 1.592-2.516 3.125-2.516 1.789 0 3.347.796 3.347 2.691l-.003.002z" fill="#1a1a1a"/>
     </g>
-    <defs><clipPath id="c"><rect width="203.556" height="32" fill="white"/></clipPath></defs>
+    <defs><clipPath id="lc"><rect width="203.556" height="32" fill="white"/></clipPath></defs>
   </svg>
   <div class="header-divider"></div>
-  <span class="header-title">Trefferfläche berechnen</span>
+  <span class="header-title">Abstrahlwinkel-Rechner</span>
 </header>
-<div class="accent-bar"></div>
 
 <div class="container">
-  <h1 class="page-title">Strahlgeometrie-Rechner</h1>
-  <p class="page-subtitle">Berechnung der Trefferfläche für VEGAPULS Radar-Füllstandsensoren</p>
+  <h1 class="page-title">Abstrahlwinkel-Rechner</h1>
+  <p class="page-subtitle">Berechnung des Abstrahlwinkels und der Spotgrösse für VEGAPULS Füllstandsensoren</p>
 
-  <!-- Controls -->
+  <!-- Config -->
   <div class="card">
     <h2>Konfiguration</h2><br>
-    <div class="control-row">
-      <span class="control-label">Radargerät:</span>
-      <select id="pulsefamily"></select>
-    </div>
-    <div class="control-row">
-      <span class="control-label">Antenne:</span>
-      <select id="pulseantenna"></select>
-    </div>
-    <div class="control-row">
-      <span class="control-label">Distanz:</span>
-      <div class="slider-wrap">
-        <input type="range" id="distSlider" min="0.3" max="15" value="10" step="0.1" />
-        <input type="text" id="distInput" class="dist-input" value="10" maxlength="5" />
-        <span class="unit-label">m</span>
+    <div class="config-layout">
+      <div class="config-controls">
+        <div class="control-row">
+          <span class="control-label">Radargerät:</span>
+          <select id="pulsefamily"></select>
+        </div>
+        <div class="control-row">
+          <span class="control-label">Antenne:</span>
+          <select id="pulseantenna"></select>
+        </div>
+        <div class="control-row">
+          <span class="control-label">Distanz:</span>
+          <div class="slider-wrap">
+            <input type="range" id="distSlider" min="0.3" max="15" value="10" step="0.1" />
+            <input type="text" id="distInput" class="dist-input" value="10" maxlength="5" />
+            <span class="unit-label">m</span>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-badge">Frequenz: <strong id="infoFreq">–</strong></div>
+          <div class="info-badge">Max. Distanz: <strong id="infoMaxDist">–</strong></div>
+          <div class="info-badge">Antennentyp: <strong id="infoType">–</strong></div>
+        </div>
       </div>
-    </div>
-    <div class="info-row">
-      <div class="info-badge">Frequenz: <strong id="infoFreq">–</strong></div>
-      <div class="info-badge">Max. Distanz: <strong id="infoMaxDist">–</strong></div>
-      <div class="info-badge">Antennentyp: <strong id="infoType">–</strong></div>
+      <div class="product-image-wrap">
+        <img id="productImg" src="" alt="Produktbild" />
+      </div>
     </div>
   </div>
 
@@ -251,7 +241,7 @@
     <h2>Ergebnisse</h2><br>
     <div class="results-grid">
       <div class="result-box">
-        <div class="result-label">Öffnungswinkel</div>
+        <div class="result-label">Abstrahlwinkel</div>
         <div class="result-value" id="resAngle">–<span class="unit-sm">°</span></div>
       </div>
       <div class="result-box accent">
@@ -270,7 +260,7 @@
 
   <!-- Visualization -->
   <div class="card">
-    <h2>Visualisierung</h2><br>
+    <h2>Abstrahlwinkel-Visualisierung</h2><br>
     <div class="viz-wrap">
       <svg id="beamSvg" width="100%" viewBox="0 0 620 320" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -316,124 +306,121 @@
       info.ch@vega.com
     </div>
     <div class="footer-copy">
-      &copy; 2019–2026 by J. Wagner &nbsp;|&nbsp; Basierend auf VEGAPULS Strahlgeometrie-Daten &nbsp;|&nbsp; Keine offizielle VEGA-Applikation
+      &copy; 2026 by M. von Matt &nbsp;|&nbsp; Basierend auf VEGAPULS Abstrahlwinkel-Daten &nbsp;|&nbsp; Keine offizielle VEGA-Applikation
     </div>
   </div>
 </footer>
 
 <script>
 // ─────────────────────────────────────────────
-// DATA (from hbits.js)
+// DATA
 // ─────────────────────────────────────────────
 class Antenna {
-  constructor(name, frequency, angle, offset, description) {
-    this.name = name;
-    this.frequency = frequency;
-    this.angle = angle;
-    this.offset = offset;
-    this.description = description;
+  constructor(name, frequency, angle, offset, description, imageUrl) {
+    this.name = name; this.frequency = frequency; this.angle = angle;
+    this.offset = offset; this.description = description;
+    this.imageUrl = imageUrl || null;
   }
 }
-
 class Pulse {
-  constructor(name, antennas, maxdist, description) {
-    this.name = name;
-    this.antennas = antennas;
-    this.maxdist = maxdist;
-    this.description = description;
+  constructor(name, antennas, maxdist, description, imageUrl) {
+    this.name = name; this.antennas = antennas; this.maxdist = maxdist;
+    this.description = description; this.imageUrl = imageUrl;
   }
-  calcArea(angle, dist) {
-    return 2 * Math.tan(angle * Math.PI / 360.0) * dist;
-  }
+  calcArea(angle, dist) { return 2 * Math.tan(angle * Math.PI / 360.0) * dist; }
 }
 
-const ant26PP80    = new Antenna("26PP80",    26, 10, 0, "Hornantenne PP 80mm");
-const ant26PV40    = new Antenna("26PV40",    26, 22, 0, "Gewindeantenne PV 40mm");
-const ant26VA40    = new Antenna("26VA40",    26, 20, 0, "Edelstahlantenne 40mm");
-const ant26VA48    = new Antenna("26VA48",    26, 15, 0, "Edelstahlantenne 48mm");
-const ant26VA75    = new Antenna("26VA75",    26, 10, 0, "Edelstahlantenne 75mm");
-const ant26VA95    = new Antenna("26VA95",    26,  8, 0, "Edelstahlantenne 96mm");
-const ant26VA245   = new Antenna("26VA245",   26,  3, 0, "Parabolantenne 245mm");
-const ant26CL23    = new Antenna("26CL23",    26, 18, 0, "Clamp 2 und 3 Zoll");
-const ant26CL4     = new Antenna("26CL4",     26, 10, 0, "Clamp 4 Zoll");
-const ant26RV50    = new Antenna("26RV50",    26, 18, 0, "Rohrverschraubung 50mm");
-const ant26RV80    = new Antenna("26RV80",    26, 10, 0, "Rohrverschraubung 80mm");
-const ant26FL50    = new Antenna("26FL50",    26, 18, 0, "Flansch DN50");
-const ant26FL80    = new Antenna("26FL80",    26, 10, 0, "Flansch DN80");
-const ant80PP80    = new Antenna("80PP80",    80,  3, 0, "Hornantenne 80mm");
-const ant80GW34    = new Antenna("80GW34",    80, 14, 0, "Gewinde 3/4 Zoll");
-const ant80GW1     = new Antenna("80GW1",     80, 10, 0, "Gewinde 1 Zoll");
-const ant80GW112   = new Antenna("80GW112",   80,  7, 0, "Gewinde 1 1/2 Zoll");
-const ant80GW112HT = new Antenna("80GW112HT",80, 10, 0, "Gewinde G 1 1/2 Zoll Hochtemp");
-const ant80PVGW112 = new Antenna("80PGW112",  80,  8, 0, "Kunststoff-Gewindeantenne 1 1/2");
-const ant80PV80    = new Antenna("80PV80",    80,  4, 0, "PVDF 80mm");
-const ant80FL25    = new Antenna("80FL25",    80, 10, 0, "Flansch DN25");
-const ant80FL50    = new Antenna("80FL50",    80,  6, 0, "Flansch DN50");
-const ant80FL80    = new Antenna("80FL80",    80,  3, 0, "Flansch DN80");
-const ant80HYG     = new Antenna("80HYG",     80,  6, 0, "Div. Hygieneanschlüsse");
-const ant6STAB     = new Antenna("6STAB",      6, 24, 0, "Stabantenne");
-const ant6FREE     = new Antenna("6FREE",      6, 38, 0, "Freistrahlend");
-const ant6VA75     = new Antenna("6VA75",      6, 38, 0, "Edelstahlantenne 75mm");
-const ant6VA96     = new Antenna("6VA96",      6, 30, 0, "Edelstahlantenne 95mm");
-const ant6VA145    = new Antenna("6VA145",     6, 20, 0, "Edelstahlantenne 145mm");
-const ant6VA196    = new Antenna("6VA196",     6, 17, 0, "Edelstahlantenne 196mm");
-const ant6VA242    = new Antenna("6VA242",     6, 14, 0, "Edelstahlantenne 242mm");
-const ant79PP80    = new Antenna("79PP80",    79, 3.5, 0, "Hornantenne PP 80mm");
-const ant79VA80    = new Antenna("79VA80",    79,  4, 0, "Linsenantenne VA 80mm");
-const ant80VA80    = new Antenna("80VA80",    80,  3, 0, "Linsenantenne VA 80mm");
-const ant79GW112   = new Antenna("79GW112",   79,  7, 0, "Gewinde 1 1/2 Zoll");
-const ant80GW1HYG  = new Antenna("80GW1HYG", 80, 13, 0, "Gewinde G1 für Hygieneadapter");
-const ant80GW1P42  = new Antenna("80GW1P42",  80, 12, 0, "Gewinde G1");
-const ant80GW34P42 = new Antenna("80GW34P42", 80, 14, 0, "Gewinde G 3/4");
-const ant80INTG112 = new Antenna("80INTG112", 80,  8, 0, "Integriert G 1 1/2");
-const ant80INT80   = new Antenna("80INT80",   80,  4, 0, "Integriert 80mm");
+var ant26PP80    = new Antenna("26PP80",    26, 10, 0, "Hornantenne PP 80mm");
+var ant26PV40    = new Antenna("26PV40",    26, 22, 0, "Gewindeantenne PV 40mm");
+var ant26VA40    = new Antenna("26VA40",    26, 20, 0, "Edelstahlantenne 40mm");
+var ant26VA48    = new Antenna("26VA48",    26, 15, 0, "Edelstahlantenne 48mm");
+var ant26VA75    = new Antenna("26VA75",    26, 10, 0, "Edelstahlantenne 75mm");
+var ant26VA95    = new Antenna("26VA95",    26,  8, 0, "Edelstahlantenne 96mm");
+var ant26VA245   = new Antenna("26VA245",   26,  3, 0, "Parabolantenne 245mm");
+var ant26CL23    = new Antenna("26CL23",    26, 18, 0, "Clamp 2 und 3 Zoll");
+var ant26CL4     = new Antenna("26CL4",     26, 10, 0, "Clamp 4 Zoll");
+var ant26RV50    = new Antenna("26RV50",    26, 18, 0, "Rohrverschraubung 50mm");
+var ant26RV80    = new Antenna("26RV80",    26, 10, 0, "Rohrverschraubung 80mm");
+var ant26FL50    = new Antenna("26FL50",    26, 18, 0, "Flansch DN50");
+var ant26FL80    = new Antenna("26FL80",    26, 10, 0, "Flansch DN80");
+var ant80PP80    = new Antenna("80PP80",    80,  3, 0, "Hornantenne 80mm",          I6X+"f-ps64-radarsensor-fuellstandsmessung-vegapuls64-g075-1.png");
+var I6X = "https://www.vega.com/-/media/images/products/sensors/";
+var ant80GW34    = new Antenna("80GW34",    80, 14, 0, "Gewinde 3/4 Zoll",          I6X+"f-ps6x-radar-sensor-level-measurement-vegapuls6x-pvdf.png");
+var ant80GW1     = new Antenna("80GW1",     80, 10, 0, "Gewinde 1 Zoll",            I6X+"f-ps6x-radar-sensor-level-measurement-vegapuls6x-pvdf.png");
+var ant80GW112   = new Antenna("80GW112",   80,  7, 0, "Gewinde 1 1/2 Zoll",       I6X+"f-ps6x-radar-sensor-level-measurement-vegapuls6x-pvdf.png");
+var ant80GW112HT = new Antenna("80GW112HT", 80, 10, 0, "Gewinde G 1 1/2 Zoll Hochtemp", I6X+"f-ps6x-radarsensor-fuellstandsmessung-hochtemperatur.png");
+var ant80PVGW112 = new Antenna("80PGW112",  80,  8, 0, "Kunststoff-Gewindeantenne 1 1/2");
+var ant80PV80    = new Antenna("80PV80",    80,  4, 0, "PVDF 80mm");
+var ant80FL25    = new Antenna("80FL25",    80, 10, 0, "Flansch DN25",              I6X+"f-ps64-radar-sensor-level-measurement-vegapuls64-flange-1.png");
+var ant80FL50    = new Antenna("80FL50",    80,  6, 0, "Flansch DN50",              I6X+"f-ps64-radar-sensor-level-measurement-vegapuls64-flange-1.png");
+var ant80FL80    = new Antenna("80FL80",    80,  3, 0, "Flansch DN80",              I6X+"f-ps64-radar-sensor-level-measurement-vegapuls64-flange-1.png");
+var ant80HYG     = new Antenna("80HYG",     80,  6, 0, "Div. Hygieneanschlüsse",   I6X+"ps6x-radar-sensor-level-measurement-vegapuls6x-hygienic.png");
+var ant6STAB     = new Antenna("6STAB",      6, 24, 0, "Stabantenne");
+var ant6FREE     = new Antenna("6FREE",      6, 38, 0, "Freistrahlend");
+var ant6VA75     = new Antenna("6VA75",      6, 38, 0, "Edelstahlantenne 75mm");
+var ant6VA96     = new Antenna("6VA96",      6, 30, 0, "Edelstahlantenne 95mm");
+var ant6VA145    = new Antenna("6VA145",     6, 20, 0, "Edelstahlantenne 145mm");
+var ant6VA196    = new Antenna("6VA196",     6, 17, 0, "Edelstahlantenne 196mm");
+var ant6VA242    = new Antenna("6VA242",     6, 14, 0, "Edelstahlantenne 242mm");
+var ant79PP80    = new Antenna("79PP80",    79, 3.5, 0, "Hornantenne PP 80mm");
+var ant79VA80    = new Antenna("79VA80",    79,  4, 0, "Linsenantenne VA 80mm");
+var ant80VA80    = new Antenna("80VA80",    80,  3, 0, "Linsenantenne VA 80mm",     I6X+"f-ps64-radarsensor-fuellstandsmessung-80-mounting.png");
+var ant79GW112   = new Antenna("79GW112",   79,  7, 0, "Gewinde 1 1/2 Zoll");
+var ant80GW1HYG  = new Antenna("80GW1HYG", 80, 13, 0, "Gewinde G1 f\u00fcr Hygieneadapter");
+var ant80GW1P42  = new Antenna("80GW1P42",  80, 12, 0, "Gewinde G1");
+var ant80GW34P42 = new Antenna("80GW34P42", 80, 14, 0, "Gewinde G 3/4");
+var ant80INTG112 = new Antenna("80INTG112", 80,  8, 0, "Integriert G 1 1/2");
+var ant80INT80   = new Antenna("80INT80",   80,  4, 0, "Integriert 80mm");
 
-const pulses = [
-  new Pulse("PSA23",  [ant80INTG112], 3, "Vegapuls Air 23"),
-  new Pulse("PSA41",  [ant80PVGW112], 15, "Vegapuls Air 41"),
-  new Pulse("PSA42",  [ant80INT80], 30, "Vegapuls Air 42"),
-  new Pulse("PS11",   [ant80PVGW112], 8, "Vegapuls 11 / C11"),
-  new Pulse("PS2131", [ant80PVGW112], 15, "Vegapuls 21/31/C21/C22"),
-  new Pulse("PSC23",  [ant80PV80], 30, "Vegapuls C23"),
-  new Pulse("WLS61",  [ant26PP80], 8, "Vegapuls WL S 61"),
-  new Pulse("WL61",   [ant26PP80], 15, "Vegapuls WL 61"),
-  new Pulse("PS42",   [ant80GW1HYG, ant80GW1P42, ant80GW34P42], 15, "Vegapuls 42"),
-  new Pulse("PS61",   [ant26PP80, ant26PV40], 35, "Vegapuls 61"),
-  new Pulse("PS62",   [ant26VA40, ant26VA48, ant26VA75, ant26VA95, ant26VA245], 35, "Vegapuls 62"),
-  new Pulse("PS63",   [ant26CL23, ant26CL4, ant26RV50, ant26RV80, ant26FL50, ant26FL80], 35, "Vegapuls 63"),
-  new Pulse("PS64",   [ant80PP80, ant80GW34, ant80GW112, ant80FL50, ant80FL80, ant80HYG], 30, "Vegapuls 64"),
-  new Pulse("PS65",   [ant6STAB], 10, "Vegapuls 65"),
-  new Pulse("PS66",   [ant6FREE, ant6VA75, ant6VA96, ant6VA145, ant6VA196, ant6VA242], 20, "Vegapuls 66"),
-  new Pulse("PS67",   [ant26PP80], 15, "Vegapuls 67"),
-  new Pulse("PSSR68", [ant26VA40, ant26VA48, ant26VA75, ant26VA95, ant26VA245], 35, "Vegapuls SR 68"),
-  new Pulse("PS68",   [ant26VA40, ant26VA48, ant26VA75, ant26VA95, ant26VA245], 75, "Vegapuls 68"),
-  new Pulse("PS69",   [ant79GW112, ant79PP80, ant79VA80], 120, "Vegapuls 69"),
-  new Pulse("PS6X",   [ant80GW34, ant80GW1, ant80GW112, ant80GW112HT, ant80PP80, ant80FL25, ant80FL50, ant80FL80, ant80VA80], 120, "Vegapuls 6X"),
+var IMG = "https://www.vega.com/-/media/images/products/sensors/";
+
+var pulses = [
+  new Pulse("PSA23",  [ant80INTG112], 3,  "Vegapuls Air 23",      IMG+"f-vegapuls-air-23-t.png"),
+  new Pulse("PSA41",  [ant80PVGW112], 15, "Vegapuls Air 41",      IMG+"f-vegapuls-air-41.png"),
+  new Pulse("PSA42",  [ant80INT80],   30, "Vegapuls Air 42",      IMG+"f-vegapuls-air-42.png"),
+  new Pulse("PS11",   [ant80PVGW112], 8,  "Vegapuls 11 / C11",    IMG+"devices2020/f-vegapuls-c11-g.png"),
+  new Pulse("PS2131", [ant80PVGW112], 15, "Vegapuls 21/31/C21/C22",IMG+"devices2020/f-vegapuls-c11-g.png"),
+  new Pulse("PSC23",  [ant80PV80],    30, "Vegapuls C23",         IMG+"devices2020/f-vegapuls-c23.png"),
+  new Pulse("WLS61",  [ant26PP80],    8,  "Vegapuls WL S 61",     IMG+"f-ps61-radarsensor-fuellstandsmessung-vegapuls61-g-v01.png"),
+  new Pulse("WL61",   [ant26PP80],    15, "Vegapuls WL 61",       IMG+"f-ps61-radarsensor-fuellstandsmessung-vegapuls61-g-v01.png"),
+  new Pulse("PS42",   [ant80GW1HYG, ant80GW1P42, ant80GW34P42], 15, "Vegapuls 42", IMG+"devices2020/f-vegapuls-c11-g.png"),
+  new Pulse("PS61",   [ant26PP80, ant26PV40], 35, "Vegapuls 61",  IMG+"f-ps61-radarsensor-fuellstandsmessung-vegapuls61-g-v01.png"),
+  new Pulse("PS62",   [ant26VA40, ant26VA48, ant26VA75, ant26VA95, ant26VA245], 35, "Vegapuls 62", IMG+"f-ps62-radarsensor-fuellstandsmessung-vegapuls62-horn-40_flansch-v01.png"),
+  new Pulse("PS63",   [ant26CL23, ant26CL4, ant26RV50, ant26RV80, ant26FL50, ant26FL80], 35, "Vegapuls 63", IMG+"f-ps63-radarsensor-fuellstandsmessung-vegapuls63-dn50-v01.png"),
+  new Pulse("PS64",   [ant80PP80, ant80GW34, ant80GW112, ant80FL50, ant80FL80, ant80HYG], 30, "Vegapuls 64", IMG+"f-ps64-radarsensor-fuellstandsmessung-vegapuls64-g075-1.png"),
+  new Pulse("PS65",   [ant6STAB], 10, "Vegapuls 65",             IMG+"f-ps65-radarsensor-fuellstandsmessung-vegapuls65-gewinde.png"),
+  new Pulse("PS66",   [ant6FREE, ant6VA75, ant6VA96, ant6VA145, ant6VA196, ant6VA242], 20, "Vegapuls 66", IMG+"f-ps66-radarsensor-fuellstandsmessung-vegapuls66-horn-96_dn100-v01.png"),
+  new Pulse("PS67",   [ant26PP80], 15, "Vegapuls 67",            IMG+"f-ps67-radar-sensor-level-measurement-vegapuls67-horn-antenna-flange.png"),
+  new Pulse("PSSR68", [ant26VA40, ant26VA48, ant26VA75, ant26VA95, ant26VA245], 35, "Vegapuls SR 68", IMG+"f-ps68-radarsensor-fuellstandsmessung-vegapuls68-horn-95_schwenkhalterung.png"),
+  new Pulse("PS68",   [ant26VA40, ant26VA48, ant26VA75, ant26VA95, ant26VA245], 75, "Vegapuls 68", IMG+"f-ps68-radarsensor-fuellstandsmessung-vegapuls68-horn-95_schwenkhalterung.png"),
+  new Pulse("PS69",   [ant79GW112, ant79PP80, ant79VA80], 120, "Vegapuls 69", IMG+"f-ps69-radarsensor_fuellstandsmessung_schwenkhalterung-v01.png"),
+  new Pulse("PS6X",   [ant80GW34, ant80GW1, ant80GW112, ant80GW112HT, ant80PP80, ant80FL25, ant80FL50, ant80FL80, ant80VA80], 120, "Vegapuls 6X", IMG+"f-ps64-radarsensor-fuellstandsmessung-vegapuls64-g075-1.png"),
 ];
 
 // ─────────────────────────────────────────────
 // STATE & DOM
 // ─────────────────────────────────────────────
-let actPulse = pulses[0];
-let actAntenna = actPulse.antennas[0];
+var actPulse = pulses[0];
+var actAntenna = actPulse.antennas[0];
 
-const elPulse    = document.getElementById('pulsefamily');
-const elAntenna  = document.getElementById('pulseantenna');
-const elSlider   = document.getElementById('distSlider');
-const elDistIn   = document.getElementById('distInput');
-const elResAngle = document.getElementById('resAngle');
-const elResDia   = document.getElementById('resDia');
-const elResArea  = document.getElementById('resArea');
-const elInfoFreq = document.getElementById('infoFreq');
-const elInfoMax  = document.getElementById('infoMaxDist');
-const elInfoType = document.getElementById('infoType');
+var elPulse    = document.getElementById('pulsefamily');
+var elAntenna  = document.getElementById('pulseantenna');
+var elSlider   = document.getElementById('distSlider');
+var elDistIn   = document.getElementById('distInput');
+var elResAngle = document.getElementById('resAngle');
+var elResDia   = document.getElementById('resDia');
+var elResArea  = document.getElementById('resArea');
+var elInfoFreq = document.getElementById('infoFreq');
+var elInfoMax  = document.getElementById('infoMaxDist');
+var elInfoType = document.getElementById('infoType');
+var elProdImg  = document.getElementById('productImg');
 
 // ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
 (function init() {
-  pulses.forEach(p => {
-    const opt = document.createElement('option');
+  pulses.forEach(function(p) {
+    var opt = document.createElement('option');
     opt.value = p.name;
     opt.textContent = p.description;
     elPulse.appendChild(opt);
@@ -444,8 +431,8 @@ const elInfoType = document.getElementById('infoType');
 
 function fillAntennaSelect() {
   elAntenna.innerHTML = '';
-  actPulse.antennas.forEach(a => {
-    const opt = document.createElement('option');
+  actPulse.antennas.forEach(function(a) {
+    var opt = document.createElement('option');
     opt.value = a.name;
     opt.textContent = a.description + ' (' + a.angle + '\u00B0)';
     elAntenna.appendChild(opt);
@@ -459,10 +446,10 @@ function fillAntennaSelect() {
 }
 
 function update() {
-  const dist = parseFloat(elSlider.value) || 0;
-  const angle = actAntenna.angle;
-  const diameter = actPulse.calcArea(angle, dist);
-  const area = Math.PI * Math.pow(diameter / 2, 2);
+  var dist = parseFloat(elSlider.value) || 0;
+  var angle = actAntenna.angle;
+  var diameter = actPulse.calcArea(angle, dist);
+  var area = Math.PI * Math.pow(diameter / 2, 2);
 
   elResAngle.innerHTML = angle.toFixed(2) + '<span class="unit-sm">\u00B0</span>';
   elResDia.innerHTML   = diameter.toFixed(2) + '<span class="unit-sm">m</span>';
@@ -472,44 +459,40 @@ function update() {
   elInfoMax.textContent  = actPulse.maxdist + ' m';
   elInfoType.textContent = actAntenna.description;
 
+  elProdImg.src = actAntenna.imageUrl || actPulse.imageUrl;
+  elProdImg.alt = actPulse.description + ' – ' + actAntenna.description;
+
   drawBeam(angle, dist, diameter);
 }
 
 // ─────────────────────────────────────────────
-// SVG VISUALIZATION
+// SVG
 // ─────────────────────────────────────────────
 function drawBeam(angleDeg, dist, diameter) {
-  const g = document.getElementById('beamGroup');
-  const W = 620, H = 320;
-  const ox = 70, oy = H / 2;
-  const maxLen = W - 140;
-  const maxDist = parseFloat(elSlider.max);
-  const beamLen = Math.max(30, (dist / maxDist) * maxLen);
-  const angleRad = (angleDeg * Math.PI) / 180;
-  const halfSpread = beamLen * Math.tan(angleRad / 2);
-  const spread = Math.min(halfSpread, H / 2 - 25);
-  const ex = ox + beamLen;
-  const ty = oy - spread, by = oy + spread;
-
-  let s = '';
+  var g = document.getElementById('beamGroup');
+  var W = 620, H = 320, ox = 70, oy = H / 2;
+  var maxLen = W - 140;
+  var maxDist = parseFloat(elSlider.max);
+  var beamLen = Math.max(30, (dist / maxDist) * maxLen);
+  var angleRad = (angleDeg * Math.PI) / 180;
+  var halfSpread = beamLen * Math.tan(angleRad / 2);
+  var spread = Math.min(halfSpread, H / 2 - 25);
+  var ex = ox + beamLen, ty = oy - spread, by = oy + spread;
+  var s = '';
 
   // Grid
-  for (let i = 0; i <= 5; i++) {
-    const x = ox + (maxLen / 5) * i;
-    const d = ((maxDist / 5) * i).toFixed(1);
+  for (var i = 0; i <= 5; i++) {
+    var x = ox + (maxLen / 5) * i;
+    var d = ((maxDist / 5) * i).toFixed(1);
     s += '<line x1="'+x+'" y1="25" x2="'+x+'" y2="'+(H-25)+'" stroke="#333" stroke-width="1" stroke-dasharray="4,4"/>';
     s += '<text x="'+x+'" y="'+(H-8)+'" text-anchor="middle" fill="#555" font-size="10">'+d+'m</text>';
   }
-
-  // Center axis
   s += '<line x1="'+ox+'" y1="'+oy+'" x2="'+(ox+maxLen)+'" y2="'+oy+'" stroke="#444" stroke-width="1" stroke-dasharray="6,4"/>';
 
-  // Beam cone
+  // Beam
   s += '<polygon points="'+ox+','+oy+' '+ex+','+ty+' '+ex+','+by+'" fill="url(#beamGrad)"/>';
   s += '<line x1="'+ox+'" y1="'+oy+'" x2="'+ex+'" y2="'+ty+'" stroke="url(#beamStroke)" stroke-width="1.5"/>';
   s += '<line x1="'+ox+'" y1="'+oy+'" x2="'+ex+'" y2="'+by+'" stroke="url(#beamStroke)" stroke-width="1.5"/>';
-
-  // Spot line
   s += '<line x1="'+ex+'" y1="'+ty+'" x2="'+ex+'" y2="'+by+'" stroke="#FFDE00" stroke-width="2.5" filter="url(#glow)"/>';
   var sr = Math.max(spread, 3);
   s += '<ellipse cx="'+ex+'" cy="'+oy+'" rx="8" ry="'+sr+'" fill="url(#spotGrad)"/>';
@@ -525,17 +508,16 @@ function drawBeam(angleDeg, dist, diameter) {
   s += '<path d="M '+(ox+arcR)+','+oy+' A '+arcR+' '+arcR+' 0 0 1 '+atx+','+aby+'" stroke="#FFDE00" stroke-width="2" fill="none"/>';
   s += '<text x="'+(ox+arcR+10)+'" y="'+(oy-10)+'" fill="#FFDE00" font-size="14" font-weight="700">'+angleDeg.toFixed(1)+'\u00B0</text>';
 
-  // Sensor icon
+  // Sensor
   s += '<rect x="'+(ox-22)+'" y="'+(oy-14)+'" width="22" height="28" rx="3" fill="#333" stroke="#FFDE00" stroke-width="1.5"/>';
   s += '<rect x="'+(ox-18)+'" y="'+(oy-6)+'" width="4" height="12" rx="1" fill="#FFDE00" opacity="0.7"/>';
   s += '<rect x="'+(ox-11)+'" y="'+(oy-9)+'" width="4" height="18" rx="1" fill="#FFDE00" opacity="0.5"/>';
   s += '<rect x="'+(ox-4)+'" y="'+(oy-4)+'" width="4" height="8" rx="1" fill="#FFDE00" opacity="0.3"/>';
   s += '<text x="'+(ox-11)+'" y="'+(oy+28)+'" text-anchor="middle" fill="#888" font-size="9" font-weight="600">Sensor</text>';
 
-  // Distance label
-  s += '<text x="'+((ox+ex)/2)+'" y="'+Math.min(by+24, H-28)+'" text-anchor="middle" fill="#FFDE00" font-size="12" font-weight="700">'+dist.toFixed(1)+' m</text>';
+  // Labels
+  s += '<text x="'+((ox+ex)/2)+'" y="'+Math.min(by+24,H-28)+'" text-anchor="middle" fill="#FFDE00" font-size="12" font-weight="700">'+dist.toFixed(1)+' m</text>';
 
-  // Diameter annotation
   if (spread > 8) {
     s += '<line x1="'+(ex+14)+'" y1="'+ty+'" x2="'+(ex+14)+'" y2="'+by+'" stroke="#ccc" stroke-width="1"/>';
     s += '<line x1="'+(ex+9)+'" y1="'+ty+'" x2="'+(ex+19)+'" y2="'+ty+'" stroke="#ccc" stroke-width="1"/>';
@@ -547,7 +529,7 @@ function drawBeam(angleDeg, dist, diameter) {
     s += '<text x="'+(ex+10)+'" y="'+(oy+4)+'" fill="#ddd" font-size="11" font-weight="600">\u2300 '+diameter.toFixed(2)+'m</text>';
   }
 
-  // Spot circle (top-right)
+  // Spot circle
   var cR = Math.min(Math.max(spread * 0.5, 6), 30);
   var ccx = W - 50, ccy = 45;
   s += '<circle cx="'+ccx+'" cy="'+ccy+'" r="'+cR+'" fill="none" stroke="#FFDE00" stroke-width="1.5" stroke-dasharray="3,2" opacity="0.5"/>';
@@ -565,17 +547,14 @@ elPulse.addEventListener('input', function() {
   fillAntennaSelect();
   update();
 });
-
 elAntenna.addEventListener('input', function() {
   actAntenna = actPulse.antennas.find(function(a) { return a.name === elAntenna.value; }) || actPulse.antennas[0];
   update();
 });
-
 elSlider.addEventListener('input', function() {
   elDistIn.value = elSlider.value;
   update();
 });
-
 elDistIn.addEventListener('input', function() {
   var v = parseFloat(elDistIn.value);
   if (isNaN(v)) return;
