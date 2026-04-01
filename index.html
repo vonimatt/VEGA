@@ -166,6 +166,26 @@
     /* ── 3D VIZ ── */
     .viz3d-wrap { background: #f5f5f5; border-radius: 6px; padding: 10px; display: flex; justify-content: center; border: 1px solid #e0e0e0; }
 
+    /* ── STUTZEN TABLES ── */
+    .stutzen-intro { font-size: 0.73rem; color: #888; margin-bottom: 16px; font-style: italic; }
+    .stutzen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .stutzen-block h3 {
+      font-size: 0.72rem; font-weight: 700; color: #1a1a1a;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      padding-bottom: 5px; margin-bottom: 8px;
+      border-bottom: 2px solid #FFDE00;
+    }
+    .stutzen-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .stutzen-table th {
+      background: #f5f5f5; color: #555; font-weight: 700;
+      padding: 5px 8px; text-align: left; border-bottom: 1px solid #ddd;
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .stutzen-table td { padding: 5px 8px; border-bottom: 1px solid #f0f0f0; color: #333; }
+    .stutzen-table tr:last-child td { border-bottom: none; }
+    .stutzen-table tr:hover td { background: #fffde6; }
+    @media (max-width: 600px) { .stutzen-grid { grid-template-columns: 1fr; } }
+
     /* ── FOOTER ── */
     footer { background: #f0f0f0; border-top: 1px solid #ddd; color: #666; padding: 26px 24px; margin-top: auto; }
     .footer-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
@@ -405,6 +425,84 @@
           </defs>
           <g id="tankGroup"></g>
         </svg>
+      </div>
+    </div>
+
+    <!-- Rohrstutzenmontage Referenz -->
+    <div class="card">
+      <h2>Rohrstutzenmontage — Referenz</h2><br>
+      <p class="stutzen-intro">Maximale Stutzenlänge h in Abhängigkeit des Stutzendurchmessers d (gem. Abb. 26, VEGAPULS Betriebsanleitung)</p>
+
+      <!-- Schematic drawing from VEGAPULS 6X manual, Abb. 26 -->
+      <div style="display:flex; justify-content:center; margin-bottom:20px;">
+        <img src="stutzen-schema.png" alt="Abb. 26: Rohrstutzenmontage bei abweichenden Rohrstutzenmaßen"
+             style="max-width:100%; width:560px; border:1px solid #e0e0e0; border-radius:6px; background:#fff;" />
+      </div>
+
+      <div class="stutzen-grid">
+
+        <div class="stutzen-block">
+          <h3>① Kunststoff-Hornantenne</h3>
+          <table class="stutzen-table">
+            <thead><tr><th>d</th><th>h max</th></tr></thead>
+            <tbody>
+              <tr><td>80 mm &nbsp;(3")</td><td>≤ 400 mm</td></tr>
+              <tr><td>100 mm (4")</td><td>≤ 500 mm</td></tr>
+              <tr><td>150 mm (6")</td><td>≤ 800 mm</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="stutzen-block">
+          <h3>② Gewinde — integriertes Antennensystem</h3>
+          <table class="stutzen-table">
+            <thead><tr><th>d</th><th>h max</th></tr></thead>
+            <tbody>
+              <tr><td>40 mm &nbsp;(1½")</td><td>≤ 150 mm</td></tr>
+              <tr><td>50 mm &nbsp;(2")</td><td>≤ 200 mm</td></tr>
+              <tr><td>80 mm &nbsp;(3")</td><td>≤ 300 mm</td></tr>
+              <tr><td>100 mm (4")</td><td>≤ 400 mm</td></tr>
+              <tr><td>150 mm (6")</td><td>≤ 600 mm</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="stutzen-block">
+          <h3>③ Flansch — gekapseltes Antennensystem</h3>
+          <table class="stutzen-table">
+            <thead><tr><th>d</th><th>h max</th></tr></thead>
+            <tbody>
+              <tr><td>50 mm &nbsp;(2")</td><td>≤ 200 mm</td></tr>
+              <tr><td>80 mm &nbsp;(3")</td><td>≤ 400 mm</td></tr>
+              <tr><td>100 mm (4")</td><td>≤ 500 mm</td></tr>
+              <tr><td>150 mm (6")</td><td>≤ 800 mm</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="stutzen-block">
+          <h3>④ Hornantenne</h3>
+          <table class="stutzen-table">
+            <thead><tr><th>d</th><th>h max</th><th>Empf. Ø Antenne</th></tr></thead>
+            <tbody>
+              <tr><td>40 mm (1½")</td><td>≤ 100 mm</td><td>40 mm (1½")</td></tr>
+              <tr><td>50 mm (2")</td><td>≤ 150 mm</td><td>48 mm (2")</td></tr>
+              <tr><td>80 mm (3")</td><td>≤ 300 mm</td><td>75 mm (3")</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="stutzen-block">
+          <h3>⑤ Flansch — Linsenantenne</h3>
+          <table class="stutzen-table">
+            <thead><tr><th>d</th><th>h max</th></tr></thead>
+            <tbody>
+              <tr><td>100 mm (4")</td><td>≤ 500 mm</td></tr>
+              <tr><td>150 mm (6")</td><td>≤ 800 mm</td></tr>
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
   </div>
