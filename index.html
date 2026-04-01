@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VEGA — Abstrahlwinkel-Rechner</title>
-  <!-- iOS Home Screen Icon -->
   <link rel="apple-touch-icon" href="apple-touch-icon.svg" />
   <link rel="icon" href="apple-touch-icon.svg" type="image/svg+xml" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -14,169 +13,178 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
-      background: #fff;
-      color: #1a1a1a;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      background: #fff; color: #1a1a1a; min-height: 100vh; display: flex; flex-direction: column;
     }
 
     /* ── HEADER ── */
     header {
-      background: #fff;
-      padding: 18px 24px;
-      display: flex;
-      align-items: center;
-      gap: 24px;
+      background: #fff; padding: 18px 24px;
+      display: flex; align-items: center; gap: 24px;
       border-bottom: 3px solid #FFDE00;
     }
     .logo-svg { height: 36px; width: auto; }
     .header-divider { width: 2px; height: 32px; background: #e0e0e0; }
     .header-title { color: #1a1a1a; font-size: 1rem; font-weight: 600; }
 
-    /* ── MAIN ── */
-    .container {
-      max-width: 800px; width: 100%;
-      margin: 0 auto; padding: 28px 20px; flex: 1;
+    /* ── TABS ── */
+    .tab-bar-wrap { border-bottom: 1px solid #e0e0e0; background: #fff; }
+    .tab-bar { max-width: 800px; margin: 0 auto; display: flex; padding: 0 20px; }
+    .tab-btn {
+      padding: 14px 22px; font-size: 0.875rem; font-weight: 600;
+      color: #888; cursor: pointer; border: none; background: none;
+      border-bottom: 3px solid transparent; transition: all 0.2s;
+      margin-bottom: -1px; outline: none;
     }
-    .page-title { font-size: 1.5rem; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
-    .page-subtitle { font-size: 0.85rem; color: #666; margin-bottom: 24px; }
+    .tab-btn.active { color: #1a1a1a; border-bottom-color: #FFDE00; }
+    .tab-btn:hover:not(.active) { color: #333; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 800px; width: 100%; margin: 0 auto; padding: 24px 20px; flex: 1; }
+    .page-title { font-size: 1.4rem; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+    .page-subtitle { font-size: 0.82rem; color: #666; margin-bottom: 22px; }
 
     /* ── CARD ── */
     .card {
-      background: #fff;
-      border-radius: 6px;
-      padding: 24px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.07);
-      border: 1px solid #eee;
+      background: #fff; border-radius: 6px; padding: 22px;
+      margin-bottom: 14px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); border: 1px solid #eee;
     }
     .card h2 {
-      font-size: 0.72rem; font-weight: 700; color: #1a1a1a;
+      font-size: 0.7rem; font-weight: 700; color: #1a1a1a;
       text-transform: uppercase; letter-spacing: 1.5px;
-      margin-bottom: 16px; padding-bottom: 8px;
+      margin-bottom: 16px; padding-bottom: 7px;
       border-bottom: 3px solid #FFDE00; display: inline-block;
     }
 
-    /* ── PRODUCT IMAGE ── */
-    .config-layout { display: flex; gap: 24px; align-items: flex-start; }
+    /* ── CONTROLS ── */
+    .config-layout { display: flex; gap: 20px; align-items: flex-start; }
     .config-controls { flex: 1; min-width: 0; }
     .product-image-wrap {
-      width: 160px; min-width: 160px; height: 200px;
+      width: 150px; min-width: 150px; height: 190px;
       display: flex; align-items: center; justify-content: center;
-      background: #fafafa; border: 1px solid #eee; border-radius: 8px;
-      overflow: hidden;
+      background: #fafafa; border: 1px solid #eee; border-radius: 8px; overflow: hidden;
     }
-    .product-image-wrap img {
-      max-width: 140px; max-height: 180px; object-fit: contain;
-      transition: opacity 0.3s;
-    }
+    .product-image-wrap img { max-width: 130px; max-height: 170px; object-fit: contain; transition: opacity 0.3s; }
 
-    /* ── CONTROLS ── */
-    .control-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .control-row { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
     .control-row:last-child { margin-bottom: 0; }
     .control-label { min-width: 100px; font-size: 0.82rem; font-weight: 600; color: #555; }
+
     select {
-      flex: 1; padding: 10px 36px 10px 14px;
+      flex: 1; padding: 9px 34px 9px 12px;
       border: 1px solid #ccc; border-radius: 4px;
-      background: #fff; color: #1a1a1a;
-      font-size: 0.85rem; font-weight: 500;
+      background: #fff; color: #1a1a1a; font-size: 0.84rem; font-weight: 500;
       cursor: pointer; outline: none; transition: border-color 0.2s;
       appearance: none; -webkit-appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='2' fill='none'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 12px center;
+      background-repeat: no-repeat; background-position: right 11px center;
     }
     select:focus { border-color: #FFDE00; box-shadow: 0 0 0 2px rgba(255,222,0,0.25); }
 
-    .slider-wrap { flex: 1; display: flex; align-items: center; gap: 12px; }
+    .slider-wrap { flex: 1; display: flex; align-items: center; gap: 10px; }
     input[type="range"] {
-      flex: 1; -webkit-appearance: none; height: 4px; border-radius: 2px;
-      background: #e0e0e0; outline: none;
+      flex: 1; -webkit-appearance: none; height: 4px; border-radius: 2px; background: #e0e0e0; outline: none;
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
       background: #FFDE00; border: 2px solid #1a1a1a; cursor: pointer;
     }
     input[type="range"]::-moz-range-thumb {
-      width: 20px; height: 20px; border-radius: 50%;
-      background: #FFDE00; border: 2px solid #1a1a1a; cursor: pointer;
+      width: 20px; height: 20px; border-radius: 50%; background: #FFDE00; border: 2px solid #1a1a1a; cursor: pointer;
     }
-    .dist-input {
-      width: 72px; padding: 8px 10px;
-      border: 1px solid #ccc; border-radius: 4px;
-      background: #fff; color: #1a1a1a;
-      font-size: 0.9rem; font-weight: 700; text-align: center; outline: none;
+    .num-input {
+      width: 72px; padding: 8px 8px; border: 1px solid #ccc; border-radius: 4px;
+      background: #fff; color: #1a1a1a; font-size: 0.9rem; font-weight: 700; text-align: center; outline: none;
     }
-    .dist-input:focus { border-color: #FFDE00; box-shadow: 0 0 0 2px rgba(255,222,0,0.25); }
-    .unit-label { font-size: 0.82rem; color: #888; font-weight: 600; }
+    .num-input:focus { border-color: #FFDE00; box-shadow: 0 0 0 2px rgba(255,222,0,0.25); }
+    .unit-label { font-size: 0.82rem; color: #888; font-weight: 600; white-space: nowrap; }
 
     .info-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
     .info-badge {
       display: flex; align-items: center; gap: 5px;
       background: #f7f7f7; border: 1px solid #eee;
-      border-radius: 4px; padding: 5px 10px; font-size: 0.73rem; color: #777;
+      border-radius: 4px; padding: 5px 10px; font-size: 0.72rem; color: #777;
     }
     .info-badge strong { color: #1a1a1a; }
 
     /* ── RESULTS ── */
     .results-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-    .result-box {
-      background: #f9f9f9; border: 1px solid #eee; border-radius: 6px;
-      padding: 16px; text-align: center;
-    }
-    .result-box.accent {
-      border-color: #FFDE00; background: #fffde6;
-      box-shadow: inset 0 -3px 0 #FFDE00;
-    }
-    .result-label {
-      font-size: 0.68rem; color: #888; text-transform: uppercase;
-      letter-spacing: 0.8px; margin-bottom: 6px; font-weight: 700;
-    }
-    .result-value { font-size: 1.5rem; font-weight: 800; color: #1a1a1a; }
-    .result-value .unit-sm { font-size: 0.6rem; font-weight: 500; color: #999; margin-left: 2px; }
+    .result-box { background: #f9f9f9; border: 1px solid #eee; border-radius: 6px; padding: 16px; text-align: center; }
+    .result-box.accent { border-color: #FFDE00; background: #fffde6; box-shadow: inset 0 -3px 0 #FFDE00; }
+    .result-label { font-size: 0.67rem; color: #888; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; font-weight: 700; }
+    .result-value { font-size: 1.45rem; font-weight: 800; color: #1a1a1a; }
+    .result-value .unit-sm { font-size: 0.58rem; font-weight: 500; color: #999; margin-left: 2px; }
     .result-box.accent .result-value { color: #b8a000; }
 
     .warning-note {
       display: flex; align-items: center; gap: 8px;
-      padding: 10px 14px; background: #fffde6;
-      border: 1px solid #ffe082; border-radius: 4px;
-      font-size: 0.72rem; color: #8d7600; margin-top: 14px;
+      padding: 10px 13px; background: #fffde6; border: 1px solid #ffe082;
+      border-radius: 4px; font-size: 0.71rem; color: #8d7600; margin-top: 12px;
     }
 
-    /* ── VIZ ── */
-    .viz-wrap {
-      background: #1a1a1a; border-radius: 6px;
-      padding: 12px; display: flex; justify-content: center;
+    /* ── VIZ (beam) ── */
+    .viz-wrap { background: #1a1a1a; border-radius: 6px; padding: 10px; display: flex; justify-content: center; }
+
+    /* ── TANK INPUTS ── */
+    .tank-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 4px; }
+    .tank-field label { display: block; font-size: 0.7rem; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+    .tank-field .field-row { display: flex; align-items: center; gap: 6px; }
+    .tank-field input {
+      width: 100%; padding: 9px 10px; border: 1px solid #ccc; border-radius: 4px;
+      background: #fff; color: #1a1a1a; font-size: 0.95rem; font-weight: 700;
+      text-align: center; outline: none;
     }
-    svg text {
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+    .tank-field input:focus { border-color: #FFDE00; box-shadow: 0 0 0 2px rgba(255,222,0,0.25); }
+    .field-unit { font-size: 0.78rem; color: #888; font-weight: 600; white-space: nowrap; }
+    .field-hint { font-size: 0.67rem; color: #aaa; margin-top: 4px; }
+
+    /* ── TANK TYPE TOGGLE ── */
+    .type-toggle { display: flex; gap: 0; margin-bottom: 18px; border: 1px solid #ccc; border-radius: 4px; overflow: hidden; width: fit-content; }
+    .type-btn {
+      padding: 9px 22px; font-size: 0.84rem; font-weight: 600; color: #666;
+      background: #fff; border: none; cursor: pointer; outline: none; transition: all 0.18s;
     }
+    .type-btn.active { background: #FFDE00; color: #1a1a1a; }
+    .type-btn:not(.active):hover { background: #fafafa; color: #333; }
+    .type-divider { width: 1px; background: #ccc; }
+    .field-group { display: none; }
+    .field-group.visible { display: contents; }
+
+    /* ── STATUS BADGE ── */
+    .status-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .status-badge {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 20px; border-radius: 8px; font-size: 1rem; font-weight: 800;
+      min-width: 140px; justify-content: center; flex-shrink: 0;
+    }
+    .status-badge.ok { background: #e8f5e9; color: #2e7d32; border: 2px solid #a5d6a7; }
+    .status-badge.warn { background: #fff3e0; color: #e65100; border: 2px solid #ffcc80; }
+    .status-detail { font-size: 0.78rem; color: #555; line-height: 1.8; }
+    .status-detail strong { color: #1a1a1a; }
+
+    /* ── 3D VIZ ── */
+    .viz3d-wrap { background: #f5f5f5; border-radius: 6px; padding: 10px; display: flex; justify-content: center; border: 1px solid #e0e0e0; }
 
     /* ── FOOTER ── */
-    footer {
-      background: #f0f0f0; border-top: 1px solid #ddd;
-      color: #666; padding: 28px 24px; margin-top: auto;
-    }
-    .footer-inner {
-      max-width: 800px; margin: 0 auto;
-      display: flex; justify-content: space-between; align-items: flex-start;
-      flex-wrap: wrap; gap: 20px;
-    }
-    .footer-logo { height: 26px; }
-    .footer-address { font-size: 0.75rem; line-height: 1.7; color: #666; }
+    footer { background: #f0f0f0; border-top: 1px solid #ddd; color: #666; padding: 26px 24px; margin-top: auto; }
+    .footer-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
+    .footer-logo { height: 24px; }
+    .footer-address { font-size: 0.73rem; line-height: 1.7; color: #666; }
     .footer-address strong { color: #333; }
-    .footer-copy {
-      font-size: 0.65rem; color: #999; width: 100%;
-      border-top: 1px solid #ddd; padding-top: 14px; margin-top: 8px;
-    }
+    .footer-copy { font-size: 0.63rem; color: #999; width: 100%; border-top: 1px solid #ddd; padding-top: 12px; margin-top: 6px; }
+
+    svg text { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; }
 
     @media (max-width: 600px) {
       .results-grid { grid-template-columns: 1fr; }
+      .tank-grid { grid-template-columns: 1fr 1fr; }
       .control-row { flex-wrap: wrap; }
       .control-label { min-width: 100%; margin-bottom: 4px; }
       .footer-inner { flex-direction: column; }
       .config-layout { flex-direction: column; }
-      .product-image-wrap { width: 100%; height: 140px; }
+      .product-image-wrap { width: 100%; height: 130px; }
+      .status-row { flex-direction: column; }
     }
   </style>
 </head>
@@ -202,96 +210,205 @@
     <defs><clipPath id="lc"><rect width="203.556" height="32" fill="white"/></clipPath></defs>
   </svg>
   <div class="header-divider"></div>
-  <span class="header-title">Abstrahlwinkel-Rechner</span>
+  <span class="header-title" id="headerTitle">Abstrahlwinkel-Rechner</span>
 </header>
 
-<div class="container">
-  <h1 class="page-title">Abstrahlwinkel-Rechner</h1>
-  <p class="page-subtitle">Berechnung des Abstrahlwinkels und der Spotgrösse für VEGAPULS Füllstandsensoren</p>
+<!-- Tab bar -->
+<div class="tab-bar-wrap">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab(1)">Abstrahlwinkel</button>
+    <button class="tab-btn" onclick="switchTab(2)">Behälter-Check</button>
+  </div>
+</div>
 
-  <!-- Config -->
-  <div class="card">
-    <h2>Konfiguration</h2><br>
-    <div class="config-layout">
-      <div class="config-controls">
-        <div class="control-row">
-          <span class="control-label">Radargerät:</span>
-          <select id="pulsefamily"></select>
-        </div>
-        <div class="control-row">
-          <span class="control-label">Antenne:</span>
-          <select id="pulseantenna"></select>
-        </div>
-        <div class="control-row">
-          <span class="control-label">Distanz:</span>
-          <div class="slider-wrap">
-            <input type="range" id="distSlider" min="0.3" max="15" value="10" step="0.1" />
-            <input type="text" id="distInput" class="dist-input" value="10" maxlength="5" />
-            <span class="unit-label">m</span>
+<div class="container">
+
+  <!-- ═══════════════ TAB 1 ═══════════════ -->
+  <div id="tab1" class="tab-pane active">
+    <h1 class="page-title">Abstrahlwinkel-Rechner</h1>
+    <p class="page-subtitle">Berechnung des Abstrahlwinkels und der Spotgrösse für VEGAPULS Füllstandsensoren</p>
+
+    <div class="card">
+      <h2>Konfiguration</h2><br>
+      <div class="config-layout">
+        <div class="config-controls">
+          <div class="control-row">
+            <span class="control-label">Radargerät:</span>
+            <select id="pulsefamily"></select>
+          </div>
+          <div class="control-row">
+            <span class="control-label">Antenne:</span>
+            <select id="pulseantenna"></select>
+          </div>
+          <div class="control-row">
+            <span class="control-label">Distanz:</span>
+            <div class="slider-wrap">
+              <input type="range" id="distSlider" min="0.3" max="15" value="10" step="0.1" />
+              <input type="text" id="distInput" class="num-input" value="10" maxlength="5" />
+              <span class="unit-label">m</span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-badge">Frequenz: <strong id="infoFreq">–</strong></div>
+            <div class="info-badge">Max. Distanz: <strong id="infoMaxDist">–</strong></div>
+            <div class="info-badge">Antennentyp: <strong id="infoType">–</strong></div>
           </div>
         </div>
-        <div class="info-row">
-          <div class="info-badge">Frequenz: <strong id="infoFreq">–</strong></div>
-          <div class="info-badge">Max. Distanz: <strong id="infoMaxDist">–</strong></div>
-          <div class="info-badge">Antennentyp: <strong id="infoType">–</strong></div>
+        <div class="product-image-wrap">
+          <img id="productImg" src="" alt="Produktbild" />
         </div>
       </div>
-      <div class="product-image-wrap">
-        <img id="productImg" src="" alt="Produktbild" />
+    </div>
+
+    <div class="card">
+      <h2>Ergebnisse</h2><br>
+      <div class="results-grid">
+        <div class="result-box">
+          <div class="result-label">Abstrahlwinkel</div>
+          <div class="result-value" id="resAngle">–<span class="unit-sm">°</span></div>
+        </div>
+        <div class="result-box accent">
+          <div class="result-label">Durchmesser</div>
+          <div class="result-value" id="resDia">–<span class="unit-sm">m</span></div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Fläche</div>
+          <div class="result-value" id="resArea">–<span class="unit-sm">m²</span></div>
+        </div>
+      </div>
+      <div class="warning-note">⚠ Exzentrizität nicht berücksichtigt — kreisförmige Näherung</div>
+    </div>
+
+    <div class="card">
+      <h2>Abstrahlwinkel-Visualisierung</h2><br>
+      <div class="viz-wrap">
+        <svg id="beamSvg" width="100%" viewBox="0 0 620 320" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="beamGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+              <stop offset="0%" stop-color="#FFDE00" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#FFDE00" stop-opacity="0.04"/>
+            </linearGradient>
+            <linearGradient id="beamStroke" x1="0%" y1="50%" x2="100%" y2="50%">
+              <stop offset="0%" stop-color="#FFDE00" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#FFDE00" stop-opacity="0.25"/>
+            </linearGradient>
+            <radialGradient id="spotGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFDE00" stop-opacity="0.45"/>
+              <stop offset="80%" stop-color="#FFDE00" stop-opacity="0.08"/>
+              <stop offset="100%" stop-color="#FFDE00" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <g id="beamGroup"></g>
+        </svg>
       </div>
     </div>
   </div>
 
-  <!-- Results -->
-  <div class="card">
-    <h2>Ergebnisse</h2><br>
-    <div class="results-grid">
-      <div class="result-box">
-        <div class="result-label">Abstrahlwinkel</div>
-        <div class="result-value" id="resAngle">–<span class="unit-sm">°</span></div>
+  <!-- ═══════════════ TAB 2 ═══════════════ -->
+  <div id="tab2" class="tab-pane">
+    <h1 class="page-title">Behälter-Check</h1>
+    <p class="page-subtitle">Prüft ob der Radarstrahl bei gegebener Sensorposition die Behälterwand trifft</p>
+
+    <!-- Sensor info (readonly, synced from tab1) -->
+    <div class="card">
+      <h2>Aktiver Sensor</h2><br>
+      <div class="info-row" style="margin-top:0">
+        <div class="info-badge">Gerät: <strong id="t2Device">–</strong></div>
+        <div class="info-badge">Antenne: <strong id="t2Antenna">–</strong></div>
+        <div class="info-badge">Abstrahlwinkel: <strong id="t2Angle">–</strong></div>
+        <div class="info-badge">Frequenz: <strong id="t2Freq">–</strong></div>
       </div>
-      <div class="result-box accent">
-        <div class="result-label">Durchmesser</div>
-        <div class="result-value" id="resDia">–<span class="unit-sm">m</span></div>
+      <p style="font-size:0.72rem; color:#aaa; margin-top:10px;">Sensor im Tab «Abstrahlwinkel» auswählen</p>
+    </div>
+
+    <!-- Tank dimensions -->
+    <div class="card">
+      <h2>Behälterdimensionen</h2><br>
+      <div class="type-toggle">
+        <button class="type-btn active" id="btnRect" onclick="setTankType('rect')">&#9646; Rechteckig</button>
+        <div class="type-divider"></div>
+        <button class="type-btn" id="btnRound" onclick="setTankType('round')">&#9711; Rund</button>
       </div>
-      <div class="result-box">
-        <div class="result-label">Fläche</div>
-        <div class="result-value" id="resArea">–<span class="unit-sm">m²</span></div>
+      <div class="tank-grid">
+        <!-- Rechteckig -->
+        <div class="tank-field field-group visible" id="fgL">
+          <label>Länge (L)</label>
+          <div class="field-row">
+            <input type="number" id="tankL" value="3" min="0.1" step="0.1" />
+            <span class="field-unit">m</span>
+          </div>
+        </div>
+        <div class="tank-field field-group visible" id="fgB">
+          <label>Breite (B)</label>
+          <div class="field-row">
+            <input type="number" id="tankB" value="3" min="0.1" step="0.1" />
+            <span class="field-unit">m</span>
+          </div>
+        </div>
+        <!-- Rund -->
+        <div class="tank-field field-group" id="fgD">
+          <label>Durchmesser (D)</label>
+          <div class="field-row">
+            <input type="number" id="tankD" value="3" min="0.1" step="0.1" />
+            <span class="field-unit">m</span>
+          </div>
+        </div>
+        <!-- Gemeinsam -->
+        <div class="tank-field">
+          <label>Höhe (H)</label>
+          <div class="field-row">
+            <input type="number" id="tankH" value="2" min="0.1" step="0.1" />
+            <span class="field-unit">m</span>
+          </div>
+        </div>
+        <div class="tank-field">
+          <label>Sensor Offset X</label>
+          <div class="field-row">
+            <input type="number" id="sensorOffX" value="0" step="0.01" />
+            <span class="field-unit">m</span>
+          </div>
+          <div class="field-hint">+ = rechts, – = links von Mitte</div>
+        </div>
+        <div class="tank-field">
+          <label>Sensor Offset Y</label>
+          <div class="field-row">
+            <input type="number" id="sensorOffY" value="0" step="0.01" />
+            <span class="field-unit">m</span>
+          </div>
+          <div class="field-hint">+ = hinten, – = vorne von Mitte</div>
+        </div>
       </div>
     </div>
-    <div class="warning-note">
-      ⚠ Exzentrizität nicht berücksichtigt — kreisförmige Näherung
+
+    <!-- Status -->
+    <div class="card">
+      <h2>Ergebnis</h2><br>
+      <div class="status-row">
+        <div class="status-badge ok" id="statusBadge">✓ OK</div>
+        <div class="status-detail" id="statusDetail">–</div>
+      </div>
+    </div>
+
+    <!-- 3D Visualization -->
+    <div class="card">
+      <h2>3D-Visualisierung</h2><br>
+      <div class="viz3d-wrap">
+        <svg id="tankSvg" width="100%" viewBox="0 0 620 420" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="shadow">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+            </filter>
+          </defs>
+          <g id="tankGroup"></g>
+        </svg>
+      </div>
     </div>
   </div>
 
-  <!-- Visualization -->
-  <div class="card">
-    <h2>Abstrahlwinkel-Visualisierung</h2><br>
-    <div class="viz-wrap">
-      <svg id="beamSvg" width="100%" viewBox="0 0 620 320" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="beamGrad" x1="0%" y1="50%" x2="100%" y2="50%">
-            <stop offset="0%" stop-color="#FFDE00" stop-opacity="0.45"/>
-            <stop offset="100%" stop-color="#FFDE00" stop-opacity="0.04"/>
-          </linearGradient>
-          <linearGradient id="beamStroke" x1="0%" y1="50%" x2="100%" y2="50%">
-            <stop offset="0%" stop-color="#FFDE00" stop-opacity="0.9"/>
-            <stop offset="100%" stop-color="#FFDE00" stop-opacity="0.25"/>
-          </linearGradient>
-          <radialGradient id="spotGrad" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#FFDE00" stop-opacity="0.45"/>
-            <stop offset="80%" stop-color="#FFDE00" stop-opacity="0.08"/>
-            <stop offset="100%" stop-color="#FFDE00" stop-opacity="0"/>
-          </radialGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="3" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <g id="beamGroup"></g>
-      </svg>
-    </div>
-  </div>
 </div>
 
 <footer>
@@ -324,8 +441,7 @@
 class Antenna {
   constructor(name, frequency, angle, offset, description, imageUrl) {
     this.name = name; this.frequency = frequency; this.angle = angle;
-    this.offset = offset; this.description = description;
-    this.imageUrl = imageUrl || null;
+    this.offset = offset; this.description = description; this.imageUrl = imageUrl || null;
   }
 }
 class Pulse {
@@ -336,6 +452,7 @@ class Pulse {
   calcArea(angle, dist) { return 2 * Math.tan(angle * Math.PI / 360.0) * dist; }
 }
 
+var IMG = "https://www.vega.com/-/media/images/products/sensors/";
 var ant26PP80    = new Antenna("26PP80",    26, 10, 0, "Hornantenne PP 80mm");
 var ant26PV40    = new Antenna("26PV40",    26, 22, 0, "Gewindeantenne PV 40mm");
 var ant26VA40    = new Antenna("26VA40",    26, 20, 0, "Edelstahlantenne 40mm");
@@ -349,18 +466,17 @@ var ant26RV50    = new Antenna("26RV50",    26, 18, 0, "Rohrverschraubung 50mm")
 var ant26RV80    = new Antenna("26RV80",    26, 10, 0, "Rohrverschraubung 80mm");
 var ant26FL50    = new Antenna("26FL50",    26, 18, 0, "Flansch DN50");
 var ant26FL80    = new Antenna("26FL80",    26, 10, 0, "Flansch DN80");
-var IMG = "https://www.vega.com/-/media/images/products/sensors/";
 var ant80PP80    = new Antenna("80PP80",    80,  3, 0, "Hornantenne 80mm",          IMG+"f-ps64-radarsensor-fuellstandsmessung-80-mounting.png");
 var ant80GW34    = new Antenna("80GW34",    80, 14, 0, "Gewinde 3/4 Zoll",          IMG+"f-ps64-radarsensor-fuellstandsmessung-vegapuls64-g075-1.png");
 var ant80GW1     = new Antenna("80GW1",     80, 10, 0, "Gewinde 1 Zoll",            IMG+"f-ps64-radarsensor-fuellstandsmessung-vegapuls64-g075-1.png");
 var ant80GW112   = new Antenna("80GW112",   80,  7, 0, "Gewinde 1 1/2 Zoll",       IMG+"f-ps64-radarsensor-fuellstandsmessung-vegapuls64-g075-1.png");
-var ant80GW112HT = new Antenna("80GW112HT", 80, 10, 0, "Gewinde G 1 1/2 Zoll Hochtemp", IMG+"f-ps6x-radarsensor-fuellstandsmessung-hochtemperatur.png");
+var ant80GW112HT = new Antenna("80GW112HT",80, 10, 0, "Gewinde G 1 1/2 Zoll Hochtemp", IMG+"f-ps6x-radarsensor-fuellstandsmessung-hochtemperatur.png");
 var ant80PVGW112 = new Antenna("80PGW112",  80,  8, 0, "Kunststoff-Gewindeantenne 1 1/2");
 var ant80PV80    = new Antenna("80PV80",    80,  4, 0, "PVDF 80mm");
 var ant80FL25    = new Antenna("80FL25",    80, 10, 0, "Flansch DN25",              IMG+"f-ps64-radar-sensor-level-measurement-vegapuls64-flange-1.png");
 var ant80FL50    = new Antenna("80FL50",    80,  6, 0, "Flansch DN50",              IMG+"f-ps64-radar-sensor-level-measurement-vegapuls64-flange-1.png");
 var ant80FL80    = new Antenna("80FL80",    80,  3, 0, "Flansch DN80",              IMG+"f-ps64-radar-sensor-level-measurement-vegapuls64-flange-1.png");
-var ant80HYG     = new Antenna("80HYG",     80,  6, 0, "Div. Hygieneanschlüsse",   IMG+"ps6x-radar-sensor-level-measurement-vegapuls6x-hygienic.png");
+var ant80HYG     = new Antenna("80HYG",     80,  6, 0, "Div. Hygieneanschl\u00fcsse", IMG+"ps6x-radar-sensor-level-measurement-vegapuls6x-hygienic.png");
 var ant6STAB     = new Antenna("6STAB",      6, 24, 0, "Stabantenne");
 var ant6FREE     = new Antenna("6FREE",      6, 38, 0, "Freistrahlend");
 var ant6VA75     = new Antenna("6VA75",      6, 38, 0, "Edelstahlantenne 75mm");
@@ -402,9 +518,9 @@ var pulses = [
 ];
 
 // ─────────────────────────────────────────────
-// STATE & DOM
+// STATE
 // ─────────────────────────────────────────────
-var actPulse = pulses[0];
+var actPulse   = pulses[0];
 var actAntenna = actPulse.antennas[0];
 
 var elPulse    = document.getElementById('pulsefamily');
@@ -420,13 +536,25 @@ var elInfoType = document.getElementById('infoType');
 var elProdImg  = document.getElementById('productImg');
 
 // ─────────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────────
+function switchTab(n) {
+  document.getElementById('tab1').classList.toggle('active', n === 1);
+  document.getElementById('tab2').classList.toggle('active', n === 2);
+  var btns = document.querySelectorAll('.tab-btn');
+  btns[0].classList.toggle('active', n === 1);
+  btns[1].classList.toggle('active', n === 2);
+  document.getElementById('headerTitle').textContent = n === 1 ? 'Abstrahlwinkel-Rechner' : 'Beh\u00e4lter-Check';
+  if (n === 2) updateTankCheck();
+}
+
+// ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
 (function init() {
   pulses.forEach(function(p) {
     var opt = document.createElement('option');
-    opt.value = p.name;
-    opt.textContent = p.description;
+    opt.value = p.name; opt.textContent = p.description;
     elPulse.appendChild(opt);
   });
   fillAntennaSelect();
@@ -450,41 +578,372 @@ function fillAntennaSelect() {
 }
 
 function update() {
-  var dist = parseFloat(elSlider.value) || 0;
-  var angle = actAntenna.angle;
-  var diameter = actPulse.calcArea(angle, dist);
-  var area = Math.PI * Math.pow(diameter / 2, 2);
+  var dist   = parseFloat(elSlider.value) || 0;
+  var angle  = actAntenna.angle;
+  var diam   = actPulse.calcArea(angle, dist);
+  var area   = Math.PI * Math.pow(diam / 2, 2);
 
   elResAngle.innerHTML = angle.toFixed(2) + '<span class="unit-sm">\u00B0</span>';
-  elResDia.innerHTML   = diameter.toFixed(2) + '<span class="unit-sm">m</span>';
-  elResArea.innerHTML  = area.toFixed(2) + '<span class="unit-sm">m\u00B2</span>';
-
+  elResDia.innerHTML   = diam.toFixed(2)  + '<span class="unit-sm">m</span>';
+  elResArea.innerHTML  = area.toFixed(2)  + '<span class="unit-sm">m\u00B2</span>';
   elInfoFreq.textContent = actAntenna.frequency + ' GHz';
   elInfoMax.textContent  = actPulse.maxdist + ' m';
   elInfoType.textContent = actAntenna.description;
-
   elProdImg.src = actAntenna.imageUrl || actPulse.imageUrl;
-  elProdImg.alt = actPulse.description + ' – ' + actAntenna.description;
+  elProdImg.alt = actPulse.description + ' \u2013 ' + actAntenna.description;
 
-  drawBeam(angle, dist, diameter);
+  drawBeam(angle, dist, diam);
+  updateTankCheck();
 }
 
 // ─────────────────────────────────────────────
-// SVG
+// TAB 2: TANK TYPE TOGGLE
+// ─────────────────────────────────────────────
+var tankType = 'rect';
+
+function setTankType(t) {
+  tankType = t;
+  document.getElementById('btnRect').classList.toggle('active', t === 'rect');
+  document.getElementById('btnRound').classList.toggle('active', t === 'round');
+  document.getElementById('fgL').classList.toggle('visible', t === 'rect');
+  document.getElementById('fgB').classList.toggle('visible', t === 'rect');
+  document.getElementById('fgD').classList.toggle('visible', t === 'round');
+  updateTankCheck();
+}
+
+// ─────────────────────────────────────────────
+// TAB 2: TANK CHECK
+// ─────────────────────────────────────────────
+function updateTankCheck() {
+  document.getElementById('t2Device').textContent  = actPulse.description;
+  document.getElementById('t2Antenna').textContent = actAntenna.description;
+  document.getElementById('t2Angle').textContent   = actAntenna.angle.toFixed(1) + '\u00B0';
+  document.getElementById('t2Freq').textContent    = actAntenna.frequency + ' GHz';
+
+  var H  = Math.max(0.1, parseFloat(document.getElementById('tankH').value)      || 2);
+  var oX = parseFloat(document.getElementById('sensorOffX').value) || 0;
+  var oY = parseFloat(document.getElementById('sensorOffY').value) || 0;
+  var halfAngle = actAntenna.angle / 2;
+  var r  = H * Math.tan(halfAngle * Math.PI / 180);
+
+  var badge  = document.getElementById('statusBadge');
+  var detail = document.getElementById('statusDetail');
+
+  if (tankType === 'round') {
+    var D  = Math.max(0.1, parseFloat(document.getElementById('tankD').value) || 3);
+    var R  = D / 2;
+    var margin = 0.001;
+    // Clamp sensor inside cylinder
+    var distFromCenter = Math.sqrt(oX*oX + oY*oY);
+    if (distFromCenter > R - margin) {
+      var scale0 = (R - margin) / distFromCenter;
+      oX *= scale0; oY *= scale0;
+    }
+    var dMin = R - Math.sqrt(oX*oX + oY*oY);
+    var collision = r >= dMin;
+
+    badge.className   = collision ? 'status-badge warn' : 'status-badge ok';
+    badge.textContent = collision ? '\u26A0 Warnung' : '\u2713 OK';
+    detail.innerHTML =
+      '<strong>Strahlradius bei ' + H.toFixed(2) + ' m:</strong> ' + r.toFixed(3) + ' m<br>' +
+      '<strong>Abstand Sensor \u2192 Wand:</strong> ' + dMin.toFixed(3) + ' m<br>' +
+      (collision
+        ? '<strong style="color:#e65100">Wandkontakt — Strahl trifft Zylinderwand</strong>'
+        : '<strong style="color:#2e7d32">Kein Wandkontakt</strong> — Sicherheitsabstand: ' + (dMin - r).toFixed(3) + ' m');
+
+    drawCylinder(D, H, oX, oY, r, collision);
+
+  } else {
+    var L  = Math.max(0.1, parseFloat(document.getElementById('tankL').value) || 3);
+    var B  = Math.max(0.1, parseFloat(document.getElementById('tankB').value) || 3);
+    var margin2 = 0.01;
+    oX = Math.max(-(L/2 - margin2), Math.min(L/2 - margin2, oX));
+    oY = Math.max(-(B/2 - margin2), Math.min(B/2 - margin2, oY));
+    var sx = L/2 + oX, sy = B/2 + oY;
+    var dR = L - sx, dL = sx, dFront = sy, dBack = B - sy;
+    var dMin2  = Math.min(dR, dL, dFront, dBack);
+    var collision2 = r >= dMin2;
+
+    badge.className   = collision2 ? 'status-badge warn' : 'status-badge ok';
+    badge.textContent = collision2 ? '\u26A0 Warnung' : '\u2713 OK';
+
+    var wallHit = [];
+    if (r >= dR)     wallHit.push('rechts (' + dR.toFixed(2) + ' m)');
+    if (r >= dL)     wallHit.push('links ('  + dL.toFixed(2) + ' m)');
+    if (r >= dFront) wallHit.push('vorne ('  + dFront.toFixed(2) + ' m)');
+    if (r >= dBack)  wallHit.push('hinten (' + dBack.toFixed(2)  + ' m)');
+
+    detail.innerHTML =
+      '<strong>Strahlradius bei ' + H.toFixed(2) + ' m:</strong> ' + r.toFixed(3) + ' m<br>' +
+      '<strong>N\u00e4chste Wand:</strong> ' + dMin2.toFixed(3) + ' m<br>' +
+      (collision2
+        ? '<strong style="color:#e65100">Wandkontakt:</strong> ' + wallHit.join(', ')
+        : '<strong style="color:#2e7d32">Kein Wandkontakt</strong> — Sicherheitsabstand: ' + (dMin2 - r).toFixed(3) + ' m');
+
+    draw3D(L, B, H, sx, sy, actAntenna.angle, r, collision2, dR, dL, dFront, dBack);
+  }
+}
+
+// ─────────────────────────────────────────────
+// 3D CYLINDER VISUALIZATION
+// ─────────────────────────────────────────────
+function drawCylinder(D, H, oX, oY, r, collision) {
+  var W = 620, SH = 420;
+  var R = D / 2;
+
+  // Isometric scale
+  var isoW = D * 1.225 * 2;
+  var isoH = H + D * 0.707;
+  var scale = Math.min((W - 120) / isoW, (SH - 80) / isoH, 70);
+
+  // Center the cylinder: center of tank at 3D (0,0,z)
+  // iso projection: p(x,y,z) relative to center
+  var cxSvg = W / 2;
+  var cyBase = SH * 0.72; // y position of bottom ellipse center
+
+  function p(x, y, z) {
+    return {
+      x: cxSvg + (x - y) * 0.866 * scale,
+      y: cyBase + (x + y) * 0.5 * scale - z * scale
+    };
+  }
+
+  // Ellipse axes for a horizontal circle of radius rr
+  function eRx(rr) { return rr * Math.SQRT2 * 0.866 * scale; }
+  function eRy(rr) { return rr * Math.SQRT2 * 0.5   * scale; }
+
+  var coneColor = collision ? '#e53935' : '#43a047';
+  var coneFill  = collision ? 'rgba(229,57,53,0.15)' : 'rgba(67,160,71,0.13)';
+  var s = '';
+
+  // ── Bottom ellipse center
+  var bc = p(0, 0, 0);
+  var brx = eRx(R), bry = eRy(R);
+
+  // ── Top ellipse center
+  var tc = p(0, 0, H);
+  var trx = eRx(R), trY = eRy(R);
+
+  // Side tangent lines (leftmost / rightmost of ellipses have py_offset = 0)
+  var lx = cxSvg - brx, rx2 = cxSvg + brx;
+
+  // ── Back half of bottom ellipse (arc from right to left going "back")
+  s += '<path d="M '+(rx2.toFixed(1))+','+(bc.y.toFixed(1))+
+       ' A '+brx.toFixed(1)+' '+bry.toFixed(1)+' 0 0 0 '+lx.toFixed(1)+','+bc.y.toFixed(1)+
+       '" fill="none" stroke="#888" stroke-width="1" stroke-dasharray="4,3"/>';
+
+  // ── Cylinder body (rect between tangent lines)
+  s += '<rect x="'+lx.toFixed(1)+'" y="'+tc.y.toFixed(1)+
+       '" width="'+(rx2 - lx).toFixed(1)+'" height="'+(bc.y - tc.y).toFixed(1)+
+       '" fill="#d8d8d8" stroke="none"/>';
+
+  // ── Left & right side lines
+  s += '<line x1="'+lx.toFixed(1)+'" y1="'+bc.y.toFixed(1)+
+       '" x2="'+lx.toFixed(1)+'" y2="'+tc.y.toFixed(1)+'" stroke="#555" stroke-width="1.5"/>';
+  s += '<line x1="'+rx2.toFixed(1)+'" y1="'+bc.y.toFixed(1)+
+       '" x2="'+rx2.toFixed(1)+'" y2="'+tc.y.toFixed(1)+'" stroke="#555" stroke-width="1.5"/>';
+
+  // ── Front half of bottom ellipse
+  s += '<path d="M '+lx.toFixed(1)+','+bc.y.toFixed(1)+
+       ' A '+brx.toFixed(1)+' '+bry.toFixed(1)+' 0 0 1 '+rx2.toFixed(1)+','+bc.y.toFixed(1)+
+       '" fill="#c0c0c0" stroke="#555" stroke-width="1.5"/>';
+
+  // ── Cone footprint on bottom
+  var sensorBase = p(oX, -oY, 0); // note: Y axis in iso goes "back", oY+ = back
+  var fRx = eRx(r), fRy = eRy(r);
+  s += '<ellipse cx="'+sensorBase.x.toFixed(1)+'" cy="'+sensorBase.y.toFixed(1)+
+       '" rx="'+fRx.toFixed(1)+'" ry="'+fRy.toFixed(1)+
+       '" fill="'+coneFill+'" stroke="'+coneColor+'" stroke-width="1.5" stroke-dasharray="4,3"/>';
+
+  // ── Cone generator lines from apex to 4 cardinal points of footprint
+  var apex = p(oX, -oY, H);
+  var conePts = [
+    p(oX + r, -oY,     0),
+    p(oX - r, -oY,     0),
+    p(oX,     -oY + r, 0),
+    p(oX,     -oY - r, 0)
+  ];
+  conePts.forEach(function(cp) {
+    s += '<line x1="'+apex.x.toFixed(1)+'" y1="'+apex.y.toFixed(1)+
+         '" x2="'+cp.x.toFixed(1)+'" y2="'+cp.y.toFixed(1)+
+         '" stroke="'+coneColor+'" stroke-width="1.8" opacity="0.85"/>';
+  });
+
+  // ── Top ellipse (semi-transparent lid)
+  s += '<ellipse cx="'+tc.x.toFixed(1)+'" cy="'+tc.y.toFixed(1)+
+       '" rx="'+trx.toFixed(1)+'" ry="'+trY.toFixed(1)+
+       '" fill="rgba(240,240,240,0.55)" stroke="#444" stroke-width="1.5"/>';
+
+  // ── Sensor dot on top
+  s += '<circle cx="'+apex.x.toFixed(1)+'" cy="'+apex.y.toFixed(1)+
+       '" r="6" fill="#FFDE00" stroke="#333" stroke-width="1.5"/>';
+  s += '<circle cx="'+apex.x.toFixed(1)+'" cy="'+apex.y.toFixed(1)+
+       '" r="2.5" fill="#333"/>';
+
+  // ── Dimension labels
+  // D label (across bottom ellipse)
+  s += '<line x1="'+lx.toFixed(1)+'" y1="'+(bc.y + bry + 10).toFixed(1)+
+       '" x2="'+rx2.toFixed(1)+'" y2="'+(bc.y + bry + 10).toFixed(1)+
+       '" stroke="#aaa" stroke-width="1"/>';
+  s += '<text x="'+cxSvg+'" y="'+(bc.y + bry + 22).toFixed(1)+
+       '" text-anchor="middle" fill="#555" font-size="11" font-weight="600">\u00D8 ' + D.toFixed(1) + ' m</text>';
+  // H label (left side)
+  s += '<text x="'+(lx - 8).toFixed(1)+'" y="'+((tc.y + bc.y) / 2 + 4).toFixed(1)+
+       '" text-anchor="end" fill="#555" font-size="11" font-weight="600">H = ' + H.toFixed(1) + ' m</text>';
+
+  // ── Status label
+  var labelColor = collision ? '#e53935' : '#2e7d32';
+  var labelText  = collision ? '\u26A0 Wandkontakt' : '\u2713 OK';
+  s += '<rect x="'+(W/2 - 60)+'" y="8" width="120" height="26" rx="4" fill="'+labelColor+'" opacity="0.9"/>';
+  s += '<text x="'+W/2+'" y="25" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">'+labelText+'</text>';
+
+  document.getElementById('tankGroup').innerHTML = s;
+}
+
+// ─────────────────────────────────────────────
+// 3D ISOMETRIC VISUALIZATION
+// ─────────────────────────────────────────────
+function draw3D(L, B, H, sx, sy, angleDeg, r, collision, dR, dL, dFront, dBack) {
+  var W = 620, SH = 420;
+
+  // Scale: fit the isometric box
+  var isoW = (L + B) * 0.866;
+  var isoH = H + (L + B) * 0.5;
+  var scale = Math.min((W - 120) / isoW, (SH - 80) / isoH, 70);
+
+  // Projection origin (the front-bottom-left corner of the tank)
+  var pxMin = -B * 0.866 * scale;
+  var pxMax =  L * 0.866 * scale;
+  var pyMin = -H * scale;
+  var pyMax =  (L + B) * 0.5 * scale;
+  var cx = W  / 2 - (pxMin + pxMax) / 2;
+  var cy = SH / 2 - (pyMin + pyMax) / 2;
+
+  function p(x, y, z) {
+    return {
+      x: cx + (x - y) * 0.866 * scale,
+      y: cy + (x + y) * 0.5  * scale - z * scale
+    };
+  }
+  function pt(x, y, z) { var q = p(x,y,z); return q.x + ',' + q.y; }
+
+  var coneColor   = collision ? '#e53935' : '#43a047';
+  var coneOpacity = '0.85';
+  var coneFill    = collision ? 'rgba(229,57,53,0.18)' : 'rgba(67,160,71,0.15)';
+  var s = '';
+
+  // ── TANK WALLS (back to front for proper z-order) ──
+
+  // Back face (y = B) — dark
+  var hitBack = (r >= dBack) && collision;
+  s += '<polygon points="'+pt(0,B,0)+' '+pt(L,B,0)+' '+pt(L,B,H)+' '+pt(0,B,H)+'"'+
+       ' fill="'+(hitBack ? 'rgba(229,57,53,0.25)' : '#bdbdbd')+'" stroke="#666" stroke-width="1.2"/>';
+
+  // Left face (x = 0) — darkest
+  var hitLeft = (r >= dL) && collision;
+  s += '<polygon points="'+pt(0,0,0)+' '+pt(0,B,0)+' '+pt(0,B,H)+' '+pt(0,0,H)+'"'+
+       ' fill="'+(hitLeft ? 'rgba(229,57,53,0.25)' : '#c8c8c8')+'" stroke="#666" stroke-width="1.2"/>';
+
+  // Bottom face
+  s += '<polygon points="'+pt(0,0,0)+' '+pt(L,0,0)+' '+pt(L,B,0)+' '+pt(0,B,0)+'"'+
+       ' fill="#aaaaaa" stroke="#666" stroke-width="1.2"/>';
+
+  // Front face (y = 0)
+  var hitFront = (r >= dFront) && collision;
+  s += '<polygon points="'+pt(0,0,0)+' '+pt(L,0,0)+' '+pt(L,0,H)+' '+pt(0,0,H)+'"'+
+       ' fill="'+(hitFront ? 'rgba(229,57,53,0.25)' : '#d6d6d6')+'" stroke="#555" stroke-width="1.5"/>';
+
+  // Right face (x = L)
+  var hitRight = (r >= dR) && collision;
+  s += '<polygon points="'+pt(L,0,0)+' '+pt(L,B,0)+' '+pt(L,B,H)+' '+pt(L,0,H)+'"'+
+       ' fill="'+(hitRight ? 'rgba(229,57,53,0.25)' : '#cccccc')+'" stroke="#555" stroke-width="1.5"/>';
+
+  // ── CONE FOOTPRINT (bottom ellipse) ──
+  var fp   = p(sx, sy, 0);
+  var fprx = r * Math.sqrt(2) * 0.866 * scale;
+  var fpry = r * Math.sqrt(2) * 0.5   * scale;
+  s += '<ellipse cx="'+fp.x+'" cy="'+fp.y+'" rx="'+fprx.toFixed(1)+'" ry="'+fpry.toFixed(1)+
+       '" fill="'+coneFill+'" stroke="'+coneColor+'" stroke-width="1.5" stroke-dasharray="4,3"/>';
+
+  // ── CONE GENERATOR LINES ──
+  var apex = p(sx, sy, H);
+  var pts4 = [
+    p(sx + r, sy,     0),
+    p(sx - r, sy,     0),
+    p(sx,     sy + r, 0),
+    p(sx,     sy - r, 0),
+  ];
+  pts4.forEach(function(cp) {
+    s += '<line x1="'+apex.x.toFixed(1)+'" y1="'+apex.y.toFixed(1)+
+         '" x2="'+cp.x.toFixed(1)+'" y2="'+cp.y.toFixed(1)+
+         '" stroke="'+coneColor+'" stroke-width="1.8" opacity="'+coneOpacity+'"/>';
+  });
+
+  // ── TOP FACE (semi-transparent) ──
+  s += '<polygon points="'+pt(0,0,H)+' '+pt(L,0,H)+' '+pt(L,B,H)+' '+pt(0,B,H)+'"'+
+       ' fill="rgba(240,240,240,0.55)" stroke="#444" stroke-width="1.5"/>';
+
+  // ── SENSOR DOT ──
+  s += '<circle cx="'+apex.x.toFixed(1)+'" cy="'+apex.y.toFixed(1)+
+       '" r="6" fill="#FFDE00" stroke="#333" stroke-width="1.5"/>';
+  s += '<circle cx="'+apex.x.toFixed(1)+'" cy="'+apex.y.toFixed(1)+
+       '" r="2.5" fill="#333"/>';
+
+  // ── DIMENSION LABELS ──
+  var lbf = p(0, 0, 0), rbf = p(L, 0, 0), lbk = p(0, B, 0);
+  var ltf = p(0, 0, H);
+  // L label (front edge, bottom)
+  var lmid = p(L/2, 0, 0);
+  s += '<text x="'+lmid.x.toFixed(1)+'" y="'+(lmid.y+16).toFixed(1)+
+       '" text-anchor="middle" fill="#555" font-size="11" font-weight="600">L = '+L.toFixed(1)+' m</text>';
+  // B label (left edge, bottom)
+  var bmid = p(0, B/2, 0);
+  s += '<text x="'+(bmid.x-6).toFixed(1)+'" y="'+(bmid.y+5).toFixed(1)+
+       '" text-anchor="end" fill="#555" font-size="11" font-weight="600">B = '+B.toFixed(1)+' m</text>';
+  // H label (left vertical edge)
+  var hmid = p(0, 0, H/2);
+  s += '<text x="'+(hmid.x-8).toFixed(1)+'" y="'+(hmid.y+4).toFixed(1)+
+       '" text-anchor="end" fill="#555" font-size="11" font-weight="600">H = '+H.toFixed(1)+' m</text>';
+
+  // ── SENSOR POSITION CROSS ON TOP FACE ──
+  var scTop  = p(sx, sy, H);
+  var crossSize = 5;
+  var cxA = p(sx - 0.1, sy, H), cxB = p(sx + 0.1, sy, H);
+  var cyA = p(sx, sy - 0.1, H), cyB = p(sx, sy + 0.1, H);
+  // Draw small cross (direction-aware)
+  var dx1 = (cxB.x - cxA.x), dy1 = (cxB.y - cxA.y);
+  var len1 = Math.sqrt(dx1*dx1+dy1*dy1); dx1 /= len1; dy1 /= len1;
+  var dx2 = (cyB.x - cyA.x), dy2 = (cyB.y - cyA.y);
+  var len2 = Math.sqrt(dx2*dx2+dy2*dy2); dx2 /= len2; dy2 /= len2;
+  s += '<line x1="'+(scTop.x - dx1*8).toFixed(1)+'" y1="'+(scTop.y - dy1*8).toFixed(1)+
+       '" x2="'+(scTop.x + dx1*8).toFixed(1)+'" y2="'+(scTop.y + dy1*8).toFixed(1)+
+       '" stroke="#333" stroke-width="1.5"/>';
+  s += '<line x1="'+(scTop.x - dx2*8).toFixed(1)+'" y1="'+(scTop.y - dy2*8).toFixed(1)+
+       '" x2="'+(scTop.x + dx2*8).toFixed(1)+'" y2="'+(scTop.y + dy2*8).toFixed(1)+
+       '" stroke="#333" stroke-width="1.5"/>';
+
+  // ── STATUS LABEL ──
+  var labelColor = collision ? '#e53935' : '#2e7d32';
+  var labelText  = collision ? '\u26A0 Wandkontakt' : '\u2713 OK';
+  s += '<rect x="'+(W/2-60)+'" y="8" width="120" height="26" rx="4" fill="'+labelColor+'" opacity="0.9"/>';
+  s += '<text x="'+(W/2)+'" y="25" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">'+labelText+'</text>';
+
+  document.getElementById('tankGroup').innerHTML = s;
+}
+
+// ─────────────────────────────────────────────
+// BEAM SVG (tab1)
 // ─────────────────────────────────────────────
 function drawBeam(angleDeg, dist, diameter) {
   var g = document.getElementById('beamGroup');
   var W = 620, H = 320, ox = 70, oy = H / 2;
-  var maxLen = W - 140;
+  var maxLen  = W - 140;
   var maxDist = parseFloat(elSlider.max);
   var beamLen = Math.max(30, (dist / maxDist) * maxLen);
-  var angleRad = (angleDeg * Math.PI) / 180;
-  var halfSpread = beamLen * Math.tan(angleRad / 2);
-  var spread = Math.min(halfSpread, H / 2 - 25);
+  var spread  = Math.min(beamLen * Math.tan((angleDeg * Math.PI) / 180 / 2), H / 2 - 25);
   var ex = ox + beamLen, ty = oy - spread, by = oy + spread;
   var s = '';
 
-  // Grid
   for (var i = 0; i <= 5; i++) {
     var x = ox + (maxLen / 5) * i;
     var d = ((maxDist / 5) * i).toFixed(1);
@@ -493,49 +952,32 @@ function drawBeam(angleDeg, dist, diameter) {
   }
   s += '<line x1="'+ox+'" y1="'+oy+'" x2="'+(ox+maxLen)+'" y2="'+oy+'" stroke="#444" stroke-width="1" stroke-dasharray="6,4"/>';
 
-  // Beam
   s += '<polygon points="'+ox+','+oy+' '+ex+','+ty+' '+ex+','+by+'" fill="url(#beamGrad)"/>';
   s += '<line x1="'+ox+'" y1="'+oy+'" x2="'+ex+'" y2="'+ty+'" stroke="url(#beamStroke)" stroke-width="1.5"/>';
   s += '<line x1="'+ox+'" y1="'+oy+'" x2="'+ex+'" y2="'+by+'" stroke="url(#beamStroke)" stroke-width="1.5"/>';
   s += '<line x1="'+ex+'" y1="'+ty+'" x2="'+ex+'" y2="'+by+'" stroke="#FFDE00" stroke-width="2.5" filter="url(#glow)"/>';
-  var sr = Math.max(spread, 3);
-  s += '<ellipse cx="'+ex+'" cy="'+oy+'" rx="8" ry="'+sr+'" fill="url(#spotGrad)"/>';
+  s += '<ellipse cx="'+ex+'" cy="'+oy+'" rx="8" ry="'+Math.max(spread,3)+'" fill="url(#spotGrad)"/>';
 
-  // Angle arc
   var arcR = Math.min(55, beamLen * 0.6);
   var halfA = Math.min(angleDeg / 2, 50);
   var hr = (halfA * Math.PI) / 180;
-  var atx = ox + arcR * Math.cos(hr);
-  var aty = oy - arcR * Math.sin(hr);
-  var aby = oy + arcR * Math.sin(hr);
+  var atx = ox + arcR * Math.cos(hr), aty = oy - arcR * Math.sin(hr), aby = oy + arcR * Math.sin(hr);
   s += '<path d="M '+(ox+arcR)+','+oy+' A '+arcR+' '+arcR+' 0 0 0 '+atx+','+aty+'" stroke="#FFDE00" stroke-width="2" fill="none"/>';
   s += '<path d="M '+(ox+arcR)+','+oy+' A '+arcR+' '+arcR+' 0 0 1 '+atx+','+aby+'" stroke="#FFDE00" stroke-width="2" fill="none"/>';
   s += '<text x="'+(ox+arcR+10)+'" y="'+(oy-10)+'" fill="#FFDE00" font-size="14" font-weight="700">'+angleDeg.toFixed(1)+'\u00B0</text>';
 
-  // Sensor — skaliert mit Distanz (grösser bei grösserer Distanz)
   var maxDist2 = parseFloat(elSlider.max);
-  var distRatio = Math.max(0.35, Math.min(1.0, dist / maxDist2));
-  var sw = Math.round(18 + distRatio * 40);   // Breite  18–58px
-  var sh = Math.round(28 + distRatio * 64);   // Höhe   28–92px
-  var sx = ox - sw, sy = oy - sh / 2;
-  // Gehäuse
-  s += '<rect x="'+sx+'" y="'+sy+'" width="'+sw+'" height="'+sh+'" rx="'+(Math.round(sw*0.12))+'" fill="#2a2a2a" stroke="#FFDE00" stroke-width="'+(1+distRatio)+'" />';
-  // Typenschild-Streifen
-  var sl = Math.round(sh * 0.18);
-  s += '<rect x="'+(sx+Math.round(sw*0.15))+'" y="'+(sy+Math.round(sh*0.08))+'" width="'+(Math.round(sw*0.7))+'" height="'+sl+'" rx="2" fill="#FFDE00" opacity="0.15"/>';
-  // Antennensymbol (drei konzentrische Bögen rechts am Gehäuse)
-  var acx = ox, acy = oy;
-  var ab1 = Math.round(sh * 0.18), ab2 = Math.round(sh * 0.30), ab3 = Math.round(sh * 0.44);
-  s += '<path d="M '+acx+','+(acy-ab1)+' A '+ab1+' '+ab1+' 0 0 1 '+acx+','+(acy+ab1)+'" stroke="#FFDE00" stroke-width="'+(1+distRatio*1.5).toFixed(1)+'" fill="none" opacity="0.9"/>';
-  s += '<path d="M '+acx+','+(acy-ab2)+' A '+ab2+' '+ab2+' 0 0 1 '+acx+','+(acy+ab2)+'" stroke="#FFDE00" stroke-width="'+(0.8+distRatio).toFixed(1)+'" fill="none" opacity="0.55"/>';
-  s += '<path d="M '+acx+','+(acy-ab3)+' A '+ab3+' '+ab3+' 0 0 1 '+acx+','+(acy+ab3)+'" stroke="#FFDE00" stroke-width="'+(0.6+distRatio*0.8).toFixed(1)+'" fill="none" opacity="0.25"/>';
-  // Label
-  var fontSize = Math.round(8 + distRatio * 5);
-  s += '<text x="'+(sx + sw/2)+'" y="'+(sy + sh + fontSize + 3)+'" text-anchor="middle" fill="#888" font-size="'+fontSize+'" font-weight="700">Sensor</text>';
+  var dr = Math.max(0.35, Math.min(1.0, dist / maxDist2));
+  var sw = Math.round(18 + dr * 40), sh = Math.round(28 + dr * 64);
+  var sx2 = ox - sw, sy2 = oy - sh / 2;
+  s += '<rect x="'+sx2+'" y="'+sy2+'" width="'+sw+'" height="'+sh+'" rx="'+Math.round(sw*0.12)+'" fill="#2a2a2a" stroke="#FFDE00" stroke-width="'+(1+dr)+'"/>';
+  var ab1 = Math.round(sh*0.18), ab2 = Math.round(sh*0.30), ab3 = Math.round(sh*0.44);
+  s += '<path d="M '+ox+','+(oy-ab1)+' A '+ab1+' '+ab1+' 0 0 1 '+ox+','+(oy+ab1)+'" stroke="#FFDE00" stroke-width="'+(1+dr*1.5).toFixed(1)+'" fill="none" opacity="0.9"/>';
+  s += '<path d="M '+ox+','+(oy-ab2)+' A '+ab2+' '+ab2+' 0 0 1 '+ox+','+(oy+ab2)+'" stroke="#FFDE00" stroke-width="'+(0.8+dr).toFixed(1)+'" fill="none" opacity="0.55"/>';
+  s += '<path d="M '+ox+','+(oy-ab3)+' A '+ab3+' '+ab3+' 0 0 1 '+ox+','+(oy+ab3)+'" stroke="#FFDE00" stroke-width="'+(0.6+dr*0.8).toFixed(1)+'" fill="none" opacity="0.25"/>';
+  s += '<text x="'+(sx2+sw/2)+'" y="'+(sy2+sh+Math.round(8+dr*5)+3)+'" text-anchor="middle" fill="#888" font-size="'+Math.round(8+dr*5)+'" font-weight="700">Sensor</text>';
 
-  // Labels
   s += '<text x="'+((ox+ex)/2)+'" y="'+Math.min(by+24,H-28)+'" text-anchor="middle" fill="#FFDE00" font-size="12" font-weight="700">'+dist.toFixed(1)+' m</text>';
-
   if (spread > 8) {
     s += '<line x1="'+(ex+14)+'" y1="'+ty+'" x2="'+(ex+14)+'" y2="'+by+'" stroke="#ccc" stroke-width="1"/>';
     s += '<line x1="'+(ex+9)+'" y1="'+ty+'" x2="'+(ex+19)+'" y2="'+ty+'" stroke="#ccc" stroke-width="1"/>';
@@ -546,10 +988,7 @@ function drawBeam(angleDeg, dist, diameter) {
   } else {
     s += '<text x="'+(ex+10)+'" y="'+(oy+4)+'" fill="#ddd" font-size="11" font-weight="600">\u2300 '+diameter.toFixed(2)+'m</text>';
   }
-
-  // Spot circle
-  var cR = Math.min(Math.max(spread * 0.5, 6), 30);
-  var ccx = W - 50, ccy = 45;
+  var cR = Math.min(Math.max(spread*0.5,6),30), ccx = W-50, ccy = 45;
   s += '<circle cx="'+ccx+'" cy="'+ccy+'" r="'+cR+'" fill="none" stroke="#FFDE00" stroke-width="1.5" stroke-dasharray="3,2" opacity="0.5"/>';
   s += '<circle cx="'+ccx+'" cy="'+ccy+'" r="2" fill="#FFDE00"/>';
   s += '<text x="'+ccx+'" y="'+(ccy+cR+14)+'" text-anchor="middle" fill="#666" font-size="9" font-weight="600">Spot</text>';
@@ -569,10 +1008,7 @@ elAntenna.addEventListener('input', function() {
   actAntenna = actPulse.antennas.find(function(a) { return a.name === elAntenna.value; }) || actPulse.antennas[0];
   update();
 });
-elSlider.addEventListener('input', function() {
-  elDistIn.value = elSlider.value;
-  update();
-});
+elSlider.addEventListener('input', function() { elDistIn.value = elSlider.value; update(); });
 elDistIn.addEventListener('input', function() {
   var v = parseFloat(elDistIn.value);
   if (isNaN(v)) return;
@@ -580,6 +1016,10 @@ elDistIn.addEventListener('input', function() {
   if (v < parseFloat(elSlider.min)) v = parseFloat(elSlider.min);
   elSlider.value = v;
   update();
+});
+
+['tankL','tankB','tankD','tankH','sensorOffX','sensorOffY'].forEach(function(id) {
+  document.getElementById(id).addEventListener('input', updateTankCheck);
 });
 </script>
 
