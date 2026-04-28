@@ -186,6 +186,39 @@
     .stutzen-table tr:hover td { background: #fffde6; }
     @media (max-width: 600px) { .stutzen-grid { grid-template-columns: 1fr; } }
 
+    /* ── FLANSCH TAB ── */
+    .fl-select-row { display: flex; gap: 16px; margin-bottom: 18px; }
+    .fl-select-row .fl-group { flex: 1; }
+    .fl-select-row label { display: block; font-size: 0.7rem; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+    .fl-result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+    .flansch-svg-wrap { display: flex; justify-content: center; background: #fafafa; border: 1px solid #eee; border-radius: 6px; padding: 12px; }
+    .fl-input-row { display: flex; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; }
+    .fl-input-group { flex: 1; min-width: 80px; }
+    .fl-input-group label { display: block; font-size: 0.7rem; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+    .fl-input-group input { width: 100%; padding: 9px 10px; border: 1px solid #ccc; border-radius: 4px; background: #fff; color: #1a1a1a; font-size: 0.95rem; font-weight: 700; text-align: center; outline: none; }
+    .fl-input-group input:focus { border-color: #FFDE00; box-shadow: 0 0 0 2px rgba(255,222,0,0.25); }
+    .fl-search-btn { display: block; width: 100%; padding: 11px; background: #FFDE00; border: none; border-radius: 4px; font-size: 0.88rem; font-weight: 700; color: #1a1a1a; cursor: pointer; margin-bottom: 18px; transition: opacity 0.2s; }
+    .fl-search-btn:hover { opacity: 0.85; }
+    .fl-match-box { background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 18px; display: none; }
+    .fl-match-box.visible { display: block; }
+    .fl-match-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+    .fl-match-title { font-size: 1.2rem; font-weight: 800; color: #1a1a1a; }
+    .fl-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+    .fl-badge.exact { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+    .fl-badge.tolerance { background: #fffde6; color: #b8a000; border: 1px solid #ffe082; }
+    .fl-badge.nearest { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
+    .fl-delta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .fl-delta-cell { text-align: center; background: #fff; border: 1px solid #eee; border-radius: 6px; padding: 10px 8px; }
+    .fl-delta-label { font-size: 0.63rem; color: #888; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; font-weight: 700; }
+    .fl-delta-val { font-size: 1rem; font-weight: 800; }
+    .fl-delta-val.ok { color: #2e7d32; }
+    .fl-delta-val.warn { color: #e65100; }
+    .fl-table-vals { font-size: 0.75rem; color: #888; margin-top: 10px; }
+    @media (max-width: 600px) {
+      .fl-select-row { flex-direction: column; }
+      .fl-delta-grid { grid-template-columns: 1fr 1fr; }
+    }
+
     /* ── FOOTER ── */
     footer { background: #f0f0f0; border-top: 1px solid #ddd; color: #666; padding: 26px 24px; margin-top: auto; }
     .footer-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
@@ -238,6 +271,7 @@
   <div class="tab-bar">
     <button class="tab-btn active" onclick="switchTab(1)">Abstrahlwinkel</button>
     <button class="tab-btn" onclick="switchTab(2)">Behälter-Check</button>
+    <button class="tab-btn" onclick="switchTab(3)">Flansche</button>
   </div>
 </div>
 
@@ -507,6 +541,118 @@
     </div>
   </div>
 
+  <!-- ═══════════════ TAB 3 ═══════════════ -->
+  <div id="tab3" class="tab-pane">
+    <h1 class="page-title">Flansch-Rechner</h1>
+    <p class="page-subtitle">Anschlussmaße nach DIN EN 1092-1 / ISO 7005-1 &mdash; PN 6 bis PN 40, DN 15 bis DN 400</p>
+
+    <!-- Card A: Vorwärtssuche -->
+    <div class="card">
+      <h2>Vorwärtssuche &mdash; PN &amp; DN → Maße</h2>
+      <div class="fl-select-row">
+        <div class="fl-group">
+          <label for="flPN">Nenndruck PN</label>
+          <select id="flPN">
+            <option value="6">PN 6</option>
+            <option value="10">PN 10</option>
+            <option value="16" selected>PN 16</option>
+            <option value="25">PN 25</option>
+            <option value="40">PN 40</option>
+          </select>
+        </div>
+        <div class="fl-group">
+          <label for="flDN">Nennweite DN</label>
+          <select id="flDN">
+            <option value="15">DN 15</option>
+            <option value="20">DN 20</option>
+            <option value="25">DN 25</option>
+            <option value="32">DN 32</option>
+            <option value="40">DN 40</option>
+            <option value="50">DN 50</option>
+            <option value="65">DN 65</option>
+            <option value="80">DN 80</option>
+            <option value="100" selected>DN 100</option>
+            <option value="125">DN 125</option>
+            <option value="150">DN 150</option>
+            <option value="200">DN 200</option>
+            <option value="250">DN 250</option>
+            <option value="300">DN 300</option>
+            <option value="350">DN 350</option>
+            <option value="400">DN 400</option>
+          </select>
+        </div>
+      </div>
+      <div class="fl-result-grid" id="flResultGrid">
+        <div class="result-box accent">
+          <div class="result-label">Außen-Ø D</div>
+          <div class="result-value" id="flResD">&mdash;<span class="unit-sm">mm</span></div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Lochkreis k</div>
+          <div class="result-value" id="flResK">&mdash;<span class="unit-sm">mm</span></div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Schrauben Anz.</div>
+          <div class="result-value" id="flResN">&mdash;</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Schrauben-Ø d2</div>
+          <div class="result-value" id="flResD2">&mdash;<span class="unit-sm">mm</span></div>
+        </div>
+      </div>
+      <div class="flansch-svg-wrap">
+        <svg id="flanschSvg" width="260" height="260" viewBox="0 0 260 260">
+          <text x="130" y="135" text-anchor="middle" fill="#ccc" font-size="13">Werte wählen</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Card B: Rückwärtssuche -->
+    <div class="card">
+      <h2>Rückwärtssuche &mdash; Maße → PN &amp; DN</h2>
+      <div class="fl-input-row">
+        <div class="fl-input-group">
+          <label for="flInD">Außen-Ø D (mm)</label>
+          <input type="number" id="flInD" placeholder="z.B. 220" min="50" max="800">
+        </div>
+        <div class="fl-input-group">
+          <label for="flInK">Lochkreis k (mm)</label>
+          <input type="number" id="flInK" placeholder="z.B. 180" min="40" max="700">
+        </div>
+        <div class="fl-input-group">
+          <label for="flInN">Schrauben Anz.</label>
+          <input type="number" id="flInN" placeholder="z.B. 8" min="1" max="32">
+        </div>
+      </div>
+      <button class="fl-search-btn" onclick="updateFlanschRueckwaerts()">Passenden Flansch suchen</button>
+      <div class="fl-match-box" id="flMatchBox">
+        <div class="fl-match-header">
+          <span class="fl-match-title" id="flMatchTitle"></span>
+          <span class="fl-badge" id="flMatchBadge"></span>
+        </div>
+        <div class="fl-delta-grid">
+          <div class="fl-delta-cell">
+            <div class="fl-delta-label">ΔD</div>
+            <div class="fl-delta-val" id="flDeltaD"></div>
+          </div>
+          <div class="fl-delta-cell">
+            <div class="fl-delta-label">Δk</div>
+            <div class="fl-delta-val" id="flDeltaK"></div>
+          </div>
+          <div class="fl-delta-cell">
+            <div class="fl-delta-label">Δn</div>
+            <div class="fl-delta-val" id="flDeltaN"></div>
+          </div>
+          <div class="fl-delta-cell">
+            <div class="fl-delta-label">Score</div>
+            <div class="fl-delta-val" id="flScore"></div>
+          </div>
+        </div>
+        <div class="fl-table-vals" id="flTableVals"></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <footer>
@@ -616,6 +762,92 @@ var pulses = [
 ];
 
 // ─────────────────────────────────────────────
+// FLANSCH DATA (DIN EN 1092-1, AB 02, März 2012)
+// ─────────────────────────────────────────────
+var FLANSCH_DATA = [
+  {dn:15,  pn:6,  D:80,  k:55,  n:4,  d2:11},
+  {dn:15,  pn:10, D:95,  k:65,  n:4,  d2:14},
+  {dn:15,  pn:16, D:95,  k:65,  n:4,  d2:14},
+  {dn:15,  pn:25, D:95,  k:65,  n:4,  d2:14},
+  {dn:15,  pn:40, D:95,  k:65,  n:4,  d2:14},
+  {dn:20,  pn:6,  D:90,  k:65,  n:4,  d2:11},
+  {dn:20,  pn:10, D:105, k:75,  n:4,  d2:14},
+  {dn:20,  pn:16, D:105, k:75,  n:4,  d2:14},
+  {dn:20,  pn:25, D:105, k:75,  n:4,  d2:14},
+  {dn:20,  pn:40, D:105, k:75,  n:4,  d2:14},
+  {dn:25,  pn:6,  D:100, k:75,  n:4,  d2:11},
+  {dn:25,  pn:10, D:115, k:85,  n:4,  d2:14},
+  {dn:25,  pn:16, D:115, k:85,  n:4,  d2:14},
+  {dn:25,  pn:25, D:115, k:85,  n:4,  d2:14},
+  {dn:25,  pn:40, D:115, k:85,  n:4,  d2:14},
+  {dn:32,  pn:6,  D:120, k:90,  n:4,  d2:14},
+  {dn:32,  pn:10, D:140, k:100, n:4,  d2:18},
+  {dn:32,  pn:16, D:140, k:100, n:4,  d2:18},
+  {dn:32,  pn:25, D:140, k:100, n:4,  d2:18},
+  {dn:32,  pn:40, D:140, k:100, n:4,  d2:18},
+  {dn:40,  pn:6,  D:130, k:100, n:4,  d2:14},
+  {dn:40,  pn:10, D:150, k:110, n:4,  d2:18},
+  {dn:40,  pn:16, D:150, k:110, n:4,  d2:18},
+  {dn:40,  pn:25, D:150, k:110, n:4,  d2:18},
+  {dn:40,  pn:40, D:150, k:110, n:4,  d2:18},
+  {dn:50,  pn:6,  D:140, k:110, n:4,  d2:14},
+  {dn:50,  pn:10, D:165, k:125, n:4,  d2:18},
+  {dn:50,  pn:16, D:165, k:125, n:4,  d2:18},
+  {dn:50,  pn:25, D:165, k:125, n:4,  d2:18},
+  {dn:50,  pn:40, D:165, k:125, n:4,  d2:18},
+  {dn:65,  pn:6,  D:160, k:130, n:4,  d2:14},
+  {dn:65,  pn:10, D:185, k:145, n:8,  d2:18},
+  {dn:65,  pn:16, D:185, k:145, n:8,  d2:18},
+  {dn:65,  pn:25, D:185, k:145, n:8,  d2:18},
+  {dn:65,  pn:40, D:185, k:145, n:8,  d2:18},
+  {dn:80,  pn:6,  D:190, k:150, n:4,  d2:18},
+  {dn:80,  pn:10, D:200, k:160, n:8,  d2:18},
+  {dn:80,  pn:16, D:200, k:160, n:8,  d2:18},
+  {dn:80,  pn:25, D:200, k:160, n:8,  d2:18},
+  {dn:80,  pn:40, D:200, k:160, n:8,  d2:18},
+  {dn:100, pn:6,  D:210, k:170, n:4,  d2:18},
+  {dn:100, pn:10, D:220, k:180, n:8,  d2:18},
+  {dn:100, pn:16, D:220, k:180, n:8,  d2:18},
+  {dn:100, pn:25, D:235, k:190, n:8,  d2:22},
+  {dn:100, pn:40, D:235, k:190, n:8,  d2:22},
+  {dn:125, pn:6,  D:240, k:200, n:8,  d2:18},
+  {dn:125, pn:10, D:250, k:210, n:8,  d2:18},
+  {dn:125, pn:16, D:250, k:210, n:8,  d2:18},
+  {dn:125, pn:25, D:270, k:220, n:8,  d2:26},
+  {dn:125, pn:40, D:270, k:220, n:8,  d2:26},
+  {dn:150, pn:6,  D:265, k:225, n:8,  d2:18},
+  {dn:150, pn:10, D:285, k:240, n:8,  d2:22},
+  {dn:150, pn:16, D:285, k:240, n:8,  d2:22},
+  {dn:150, pn:25, D:300, k:250, n:8,  d2:26},
+  {dn:150, pn:40, D:300, k:250, n:8,  d2:26},
+  {dn:200, pn:6,  D:320, k:280, n:8,  d2:18},
+  {dn:200, pn:10, D:340, k:295, n:8,  d2:22},
+  {dn:200, pn:16, D:340, k:295, n:8,  d2:22},
+  {dn:200, pn:25, D:360, k:310, n:12, d2:26},
+  {dn:200, pn:40, D:375, k:320, n:12, d2:30},
+  {dn:250, pn:6,  D:375, k:335, n:12, d2:18},
+  {dn:250, pn:10, D:395, k:350, n:12, d2:22},
+  {dn:250, pn:16, D:405, k:355, n:12, d2:26},
+  {dn:250, pn:25, D:425, k:370, n:12, d2:30},
+  {dn:250, pn:40, D:450, k:385, n:12, d2:33},
+  {dn:300, pn:6,  D:440, k:395, n:12, d2:22},
+  {dn:300, pn:10, D:445, k:400, n:12, d2:22},
+  {dn:300, pn:16, D:460, k:410, n:12, d2:26},
+  {dn:300, pn:25, D:485, k:430, n:16, d2:30},
+  {dn:300, pn:40, D:515, k:450, n:16, d2:33},
+  {dn:350, pn:6,  D:490, k:445, n:12, d2:22},
+  {dn:350, pn:10, D:505, k:460, n:16, d2:22},
+  {dn:350, pn:16, D:520, k:470, n:16, d2:26},
+  {dn:350, pn:25, D:555, k:490, n:16, d2:33},
+  {dn:350, pn:40, D:580, k:510, n:16, d2:36},
+  {dn:400, pn:6,  D:540, k:495, n:16, d2:22},
+  {dn:400, pn:10, D:565, k:515, n:16, d2:26},
+  {dn:400, pn:16, D:580, k:525, n:16, d2:30},
+  {dn:400, pn:25, D:620, k:550, n:16, d2:36},
+  {dn:400, pn:40, D:660, k:585, n:16, d2:39},
+];
+
+// ─────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────
 var actPulse   = pulses[0];
@@ -637,13 +869,16 @@ var elProdImg  = document.getElementById('productImg');
 // TABS
 // ─────────────────────────────────────────────
 function switchTab(n) {
-  document.getElementById('tab1').classList.toggle('active', n === 1);
-  document.getElementById('tab2').classList.toggle('active', n === 2);
-  var btns = document.querySelectorAll('.tab-btn');
-  btns[0].classList.toggle('active', n === 1);
-  btns[1].classList.toggle('active', n === 2);
-  document.getElementById('headerTitle').textContent = n === 1 ? 'Abstrahlwinkel-Rechner' : 'Beh\u00e4lter-Check';
+  var titles = ['Abstrahlwinkel-Rechner', 'Beh\u00e4lter-Check', 'Flansch-Rechner'];
+  [1,2,3].forEach(function(i) {
+    document.getElementById('tab'+i).classList.toggle('active', n === i);
+  });
+  document.querySelectorAll('.tab-btn').forEach(function(b, i) {
+    b.classList.toggle('active', n === i+1);
+  });
+  document.getElementById('headerTitle').textContent = titles[n-1];
   if (n === 2) updateTankCheck();
+  if (n === 3) updateFlanschVorwaerts();
 }
 
 // ─────────────────────────────────────────────
@@ -1095,6 +1330,117 @@ function drawBeam(angleDeg, dist, diameter) {
 }
 
 // ─────────────────────────────────────────────
+// FLANSCH FUNCTIONS (tab3)
+// ─────────────────────────────────────────────
+function updateFlanschVorwaerts() {
+  var pn = parseInt(document.getElementById('flPN').value);
+  var dn = parseInt(document.getElementById('flDN').value);
+  var entry = FLANSCH_DATA.find(function(r) { return r.pn === pn && r.dn === dn; });
+  if (!entry) return;
+  document.getElementById('flResD').innerHTML  = entry.D + '<span class="unit-sm">mm</span>';
+  document.getElementById('flResK').innerHTML  = entry.k + '<span class="unit-sm">mm</span>';
+  document.getElementById('flResN').textContent = entry.n;
+  document.getElementById('flResD2').innerHTML = entry.d2 + '<span class="unit-sm">mm</span>';
+  drawFlanschSVG(entry);
+}
+
+function drawFlanschSVG(e) {
+  var svg = document.getElementById('flanschSvg');
+  var W = 260, cx = 130, cy = 130;
+  // Scale so D fits in W-20
+  var scale = (W - 30) / e.D;
+  var rD  = (e.D  / 2) * scale;
+  var rK  = (e.k  / 2) * scale;
+  var rD2 = Math.max(3, (e.d2 / 2) * scale * 0.7);
+  var s = '';
+  // Outer flange ring (gray)
+  s += '<circle cx="'+cx+'" cy="'+cy+'" r="'+rD.toFixed(1)+'" fill="#e8e8e8" stroke="#999" stroke-width="2"/>';
+  // Pipe bore (inner hole, ~65% of k)
+  var rBore = rK * 0.5;
+  s += '<circle cx="'+cx+'" cy="'+cy+'" r="'+rBore.toFixed(1)+'" fill="#bbb" stroke="#888" stroke-width="1.5"/>';
+  // Lochkreis (yellow dashed)
+  s += '<circle cx="'+cx+'" cy="'+cy+'" r="'+rK.toFixed(1)+'" fill="none" stroke="#FFDE00" stroke-width="1.5" stroke-dasharray="5,3"/>';
+  // Bolt holes
+  for (var i = 0; i < e.n; i++) {
+    var angle = (2 * Math.PI * i / e.n) - Math.PI/2;
+    var bx = cx + rK * Math.cos(angle);
+    var by = cy + rK * Math.sin(angle);
+    s += '<circle cx="'+bx.toFixed(1)+'" cy="'+by.toFixed(1)+'" r="'+rD2.toFixed(1)+'" fill="#555" stroke="#333" stroke-width="1"/>';
+  }
+  // Dimension line D (horizontal, top)
+  var y0 = cy - rD - 18;
+  s += '<line x1="'+(cx-rD).toFixed(1)+'" y1="'+y0+'" x2="'+(cx+rD).toFixed(1)+'" y2="'+y0+'" stroke="#555" stroke-width="1" marker-start="url(#arr)" marker-end="url(#arr)"/>';
+  s += '<text x="'+cx+'" y="'+(y0-4)+'" text-anchor="middle" fill="#333" font-size="10" font-weight="700">D = '+e.D+' mm</text>';
+  // Dimension line k (horizontal, bottom)
+  var y1 = cy + rD + 12;
+  s += '<line x1="'+(cx-rK).toFixed(1)+'" y1="'+y1+'" x2="'+(cx+rK).toFixed(1)+'" y2="'+y1+'" stroke="#b8a000" stroke-width="1"/>';
+  s += '<text x="'+cx+'" y="'+(y1+12)+'" text-anchor="middle" fill="#b8a000" font-size="10" font-weight="700">k = '+e.k+' mm</text>';
+  // Bolt count label
+  s += '<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" fill="#333" font-size="10" font-weight="700">'+e.n+'× M'+e.d2+'</text>';
+
+  svg.innerHTML = '<defs>' +
+    '<marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">' +
+    '<path d="M0,0 L6,3 L0,6 Z" fill="#555"/></marker>' +
+    '</defs>' + s;
+}
+
+function updateFlanschRueckwaerts() {
+  var inD = parseFloat(document.getElementById('flInD').value);
+  var inK = parseFloat(document.getElementById('flInK').value);
+  var inN = parseFloat(document.getElementById('flInN').value);
+  if (isNaN(inD) && isNaN(inK) && isNaN(inN)) return;
+  // Score each entry
+  var best = null, bestScore = Infinity;
+  FLANSCH_DATA.forEach(function(r) {
+    var dD = isNaN(inD) ? 0 : Math.abs(inD - r.D);
+    var dK = isNaN(inK) ? 0 : Math.abs(inK - r.k);
+    var dN = isNaN(inN) ? 0 : Math.abs(inN - r.n);
+    var score = dD + dK + dN * 20;
+    if (score < bestScore) { bestScore = score; best = r; }
+  });
+  if (!best) return;
+  var dD = isNaN(inD) ? null : Math.round((inD - best.D) * 10) / 10;
+  var dK = isNaN(inK) ? null : Math.round((inK - best.k) * 10) / 10;
+  var dN = isNaN(inN) ? null : Math.round(inN - best.n);
+
+  var box = document.getElementById('flMatchBox');
+  box.classList.add('visible');
+  document.getElementById('flMatchTitle').textContent = 'DN ' + best.dn + ' · PN ' + best.pn;
+
+  var badge = document.getElementById('flMatchBadge');
+  var roundedScore = Math.round(bestScore * 10) / 10;
+  if (roundedScore === 0) {
+    badge.textContent = 'Exakt'; badge.className = 'fl-badge exact';
+  } else if (roundedScore <= 5) {
+    badge.textContent = 'Messtoleranz'; badge.className = 'fl-badge tolerance';
+  } else {
+    badge.textContent = 'Nächster Treffer'; badge.className = 'fl-badge nearest';
+  }
+
+  function fmtDelta(v, unit) {
+    if (v === null) return '—';
+    var sign = v > 0 ? '+' : '';
+    return sign + v + (unit || '');
+  }
+  function deltaClass(v) {
+    if (v === null || v === 0) return 'ok';
+    return Math.abs(v) <= 3 ? 'ok' : 'warn';
+  }
+
+  document.getElementById('flDeltaD').textContent = fmtDelta(dD, ' mm');
+  document.getElementById('flDeltaD').className = 'fl-delta-val ' + deltaClass(dD);
+  document.getElementById('flDeltaK').textContent = fmtDelta(dK, ' mm');
+  document.getElementById('flDeltaK').className = 'fl-delta-val ' + deltaClass(dK);
+  document.getElementById('flDeltaN').textContent = fmtDelta(dN, '');
+  document.getElementById('flDeltaN').className = 'fl-delta-val ' + deltaClass(dN);
+  document.getElementById('flScore').textContent = roundedScore;
+  document.getElementById('flScore').className = 'fl-delta-val ' + (roundedScore === 0 ? 'ok' : roundedScore <= 5 ? '' : 'warn');
+
+  document.getElementById('flTableVals').textContent =
+    'Tabellenwerte: D = ' + best.D + ' mm · k = ' + best.k + ' mm · n = ' + best.n + ' · d2 = ' + best.d2 + ' mm';
+}
+
+// ─────────────────────────────────────────────
 // EVENTS
 // ─────────────────────────────────────────────
 elPulse.addEventListener('input', function() {
@@ -1119,6 +1465,9 @@ elDistIn.addEventListener('input', function() {
 ['tankL','tankB','tankD','tankH','sensorOffX','sensorOffY'].forEach(function(id) {
   document.getElementById(id).addEventListener('input', updateTankCheck);
 });
+
+document.getElementById('flPN').addEventListener('change', updateFlanschVorwaerts);
+document.getElementById('flDN').addEventListener('change', updateFlanschVorwaerts);
 </script>
 
 </body>
