@@ -1389,23 +1389,51 @@ function updateFlanschRueckwaerts() {
   var inK = parseFloat(document.getElementById('flInK').value);
   var inN = parseFloat(document.getElementById('flInN').value);
   if (isNaN(inD) && isNaN(inK) && isNaN(inN)) return;
-  // Score each entry
-  var best = null, bestScore = Infinity;
-  FLANSCH_DATA.forEach(function(r) {
+
+  // Score every entry
+  var scored = FLANSCH_DATA.map(function(r) {
     var dD = isNaN(inD) ? 0 : Math.abs(inD - r.D);
     var dK = isNaN(inK) ? 0 : Math.abs(inK - r.k);
     var dN = isNaN(inN) ? 0 : Math.abs(inN - r.n);
-    var score = dD + dK + dN * 20;
-    if (score < bestScore) { bestScore = score; best = r; }
+    return { r: r, score: dD + dK + dN * 20 };
   });
-  if (!best) return;
-  var dD = isNaN(inD) ? null : Math.round((inD - best.D) * 10) / 10;
-  var dK = isNaN(inK) ? null : Math.round((inK - best.k) * 10) / 10;
-  var dN = isNaN(inN) ? null : Math.round(inN - best.n);
+  var bestScore = Math.min.apply(null, scored.map(function(s) { return s.score; }));
+
+  // Collect ALL entries that share the best score (same D/k/n → same score)
+  var winners = scored.filter(function(s) { return s.score === bestScore; }).map(function(s) { return s.r; });
+
+  // Group winners by DN (one DN may match multiple PNs with identical dims)
+  var byDN = {};
+  winners.forEach(function(r) {
+    if (!byDN[r.dn]) byDN[r.dn] = [];
+    byDN[r.dn].push(r);
+  });
+
+  // Build title: "DN 25 · PN 10/16/25/40" — or list multiple DNs on separate lines
+  var dnKeys = Object.keys(byDN).map(Number).sort(function(a,b){return a-b;});
+
+  function pnLabel(entries) {
+    var pns = entries.map(function(e){ return e.pn; }).sort(function(a,b){return a-b;});
+    // Compact consecutive ranges: [6,10,16,25,40] → show as list since steps aren't uniform
+    return pns.map(function(p){ return 'PN ' + p; }).join(' / ');
+  }
+
+  var titleParts = dnKeys.map(function(dn) {
+    return 'DN ' + dn + ' · ' + pnLabel(byDN[dn]);
+  });
+
+  // Use first winner for delta calculations (all winners have same D/k/n)
+  var ref = winners[0];
+  var dD = isNaN(inD) ? null : Math.round((inD - ref.D) * 10) / 10;
+  var dK = isNaN(inK) ? null : Math.round((inK - ref.k) * 10) / 10;
+  var dN = isNaN(inN) ? null : Math.round(inN - ref.n);
 
   var box = document.getElementById('flMatchBox');
   box.classList.add('visible');
-  document.getElementById('flMatchTitle').textContent = 'DN ' + best.dn + ' · PN ' + best.pn;
+
+  // Title: stack lines if multiple DNs match
+  var titleEl = document.getElementById('flMatchTitle');
+  titleEl.innerHTML = titleParts.join('<br>');
 
   var badge = document.getElementById('flMatchBadge');
   var roundedScore = Math.round(bestScore * 10) / 10;
@@ -1419,8 +1447,7 @@ function updateFlanschRueckwaerts() {
 
   function fmtDelta(v, unit) {
     if (v === null) return '—';
-    var sign = v > 0 ? '+' : '';
-    return sign + v + (unit || '');
+    return (v > 0 ? '+' : '') + v + (unit || '');
   }
   function deltaClass(v) {
     if (v === null || v === 0) return 'ok';
@@ -1436,8 +1463,11 @@ function updateFlanschRueckwaerts() {
   document.getElementById('flScore').textContent = roundedScore;
   document.getElementById('flScore').className = 'fl-delta-val ' + (roundedScore === 0 ? 'ok' : roundedScore <= 5 ? '' : 'warn');
 
+  // Show table values + note if multiple d2 variants exist across matches
+  var d2vals = winners.map(function(r){ return r.d2; }).filter(function(v,i,a){ return a.indexOf(v)===i; }).sort(function(a,b){return a-b;});
+  var d2str = d2vals.length > 1 ? d2vals.join(' / ') + ' mm (je nach PN)' : d2vals[0] + ' mm';
   document.getElementById('flTableVals').textContent =
-    'Tabellenwerte: D = ' + best.D + ' mm · k = ' + best.k + ' mm · n = ' + best.n + ' · d2 = ' + best.d2 + ' mm';
+    'Tabellenwerte: D = ' + ref.D + ' mm · k = ' + ref.k + ' mm · n = ' + ref.n + ' · d2 = ' + d2str;
 }
 
 // ─────────────────────────────────────────────
