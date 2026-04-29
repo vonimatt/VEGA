@@ -219,6 +219,56 @@
       .fl-delta-grid { grid-template-columns: 1fr 1fr; }
     }
 
+    /* ── BESTÄNDIGKEIT TAB ── */
+    .bs-search-wrap { position: relative; margin-bottom: 12px; }
+    .bs-search-input {
+      width: 100%; padding: 11px 14px 11px 38px;
+      border: 1px solid #ccc; border-radius: 4px;
+      font-size: 0.9rem; color: #1a1a1a; outline: none;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 11px center;
+    }
+    .bs-search-input:focus { border-color: #FFDE00; box-shadow: 0 0 0 2px rgba(255,222,0,0.25); }
+    .bs-dropdown {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 100;
+      background: #fff; border: 1px solid #ddd; border-radius: 4px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12); max-height: 260px; overflow-y: auto; display: none;
+    }
+    .bs-dropdown.open { display: block; }
+    .bs-dd-item {
+      padding: 9px 14px; cursor: pointer; font-size: 0.83rem; border-bottom: 1px solid #f0f0f0;
+    }
+    .bs-dd-item:last-child { border-bottom: none; }
+    .bs-dd-item:hover, .bs-dd-item.active { background: #fffde6; }
+    .bs-dd-name-de { font-weight: 700; color: #1a1a1a; }
+    .bs-dd-name-en { font-size: 0.73rem; color: #888; margin-top: 1px; }
+    .bs-tags { display: flex; flex-wrap: wrap; gap: 7px; min-height: 28px; margin-bottom: 6px; }
+    .bs-tag {
+      display: flex; align-items: center; gap: 6px;
+      background: #FFDE00; color: #1a1a1a; font-size: 0.78rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 20px; white-space: nowrap;
+    }
+    .bs-tag-x {
+      cursor: pointer; font-size: 1rem; line-height: 1; opacity: 0.6;
+    }
+    .bs-tag-x:hover { opacity: 1; }
+    .bs-hint { font-size: 0.72rem; color: #aaa; margin-bottom: 4px; }
+    /* result groups */
+    .bs-result-card { margin-top: 6px; }
+    .bs-group { margin-bottom: 16px; }
+    .bs-group-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .bs-group-title .bs-icon { font-size: 1rem; }
+    .bs-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    .bs-chip {
+      padding: 5px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; border: 1px solid;
+    }
+    .bs-chip.ok    { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
+    .bs-chip.part  { background: #fffde6; color: #b8a000; border-color: #ffe082; }
+    .bs-chip.bad   { background: #fce4ec; color: #c62828; border-color: #ef9a9a; }
+    .bs-chip.info  { background: #f5f5f5; color: #777; border-color: #ddd; }
+    .bs-empty { color: #aaa; font-size: 0.82rem; font-style: italic; }
+    .bs-no-result { text-align: center; padding: 24px; color: #bbb; font-size: 0.85rem; }
+    @media (max-width: 600px) { .bs-chips { gap: 5px; } }
+
     /* ── FOOTER ── */
     footer { background: #f0f0f0; border-top: 1px solid #ddd; color: #666; padding: 26px 24px; margin-top: auto; }
     .footer-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
@@ -272,6 +322,7 @@
     <button class="tab-btn active" onclick="switchTab(1)">Abstrahlwinkel</button>
     <button class="tab-btn" onclick="switchTab(2)">Behälter-Check</button>
     <button class="tab-btn" onclick="switchTab(3)">Flansche</button>
+    <button class="tab-btn" onclick="switchTab(4)">Beständigkeit</button>
   </div>
 </div>
 
@@ -653,6 +704,30 @@
     </div>
   </div>
 
+  <!-- ═══════════════ TAB 4 ═══════════════ -->
+  <div id="tab4" class="tab-pane">
+    <h1 class="page-title">Beständigkeitsliste</h1>
+    <p class="page-subtitle">VEGA 2025 &mdash; 756 Substanzen, 17 Werkstoffe. Eine oder mehrere Substanzen wählen, dann Werkstoffempfehlung anzeigen.</p>
+
+    <div class="card">
+      <h2>Substanzauswahl</h2>
+      <div class="bs-search-wrap">
+        <input type="text" id="bsInput" class="bs-search-input" placeholder="Substanz suchen (DE oder EN)…" autocomplete="off">
+        <div class="bs-dropdown" id="bsDropdown"></div>
+      </div>
+      <p class="bs-hint">Substanz anklicken um sie hinzuzufügen. Mehrfachauswahl möglich.</p>
+      <div class="bs-tags" id="bsTags"></div>
+    </div>
+
+    <div class="card bs-result-card" id="bsResultCard" style="display:none">
+      <h2>Werkstoffempfehlung</h2>
+      <div id="bsResult"></div>
+    </div>
+    <div class="card" id="bsPlaceholder">
+      <p class="bs-no-result">⬆ Substanz(en) auswählen um Werkstoffempfehlung zu sehen</p>
+    </div>
+  </div>
+
 </div>
 
 <footer>
@@ -759,6 +834,770 @@ var pulses = [
   new Pulse("PS68",   [ant26VA40, ant26VA48, ant26VA75, ant26VA95, ant26VA245], 75, "Vegapuls 68", IMG+"f-ps68-radarsensor-fuellstandsmessung-vegapuls68-horn-95_schwenkhalterung.png"),
   new Pulse("PS69",   [ant79GW112, ant79PP80, ant79VA80], 120, "Vegapuls 69", IMG+"f-ps69-radarsensor_fuellstandsmessung_schwenkhalterung-v01.png"),
   new Pulse("PS6X",   [ant80GW34, ant80GW1, ant80GW112, ant80GW112HT, ant80PP80, ant80FL25, ant80FL50, ant80FL80, ant80VA80], 120, "Vegapuls 6X", IMG+"f-ps64-radarsensor-fuellstandsmessung-vegapuls64-g075-1.png"),
+];
+
+// ─────────────────────────────────────────────
+// BESTÄNDIGKEIT DATA (VEGA 2025, 756 Substanzen)
+// Materialien [0..16]: Sapphire|1.4571|Hastelloy|Tantal|FKM|EPDM|FFKM|NBR|PTFE|PFA|FEP|PEEK|ECTFE|PVDF|PP|PA|PE
+// Ratings: + beständig, o bedingt, – nicht, / keine Info
+// ─────────────────────────────────────────────
+var BESTAND_DATA=[
+{de:"Abgase - fluorwasserstoffhaltig",en:"Exhaust gases - containing hydrogen fluoride",r:"–/––+++++––o–++//"},
+{de:"Abgase - kohlendioxidhaltig",en:"Exhaust gases - containing carbon dioxide",r:"+/––+++++––o–++//"},
+{de:"Abgase - kohlenmonoxidhaltig",en:"Exhaust gases - containing carbon monoxide",r:"+++–+++++––+–+++/"},
+{de:"Abgase - nitrosehaltig",en:"Exhaust gases - containing nitrous compounds",r:"+++––++/+––+–++o/"},
+{de:"Abgase - salzsäurehaltig",en:"Exhaust gases - containing hydrochloric acid",r:"–/o–+++++––/–++o/"},
+{de:"Abgase - schwefeldioxidhaltig (trocken)",en:"Exhaust gases - containing sulphur dioxide (dry)",r:"+++–+++/+––+–++//"},
+{de:"Abgase - schwefelsäurehaltig - (Schwefeltrioxid feucht)",en:"Exhaust gases - containing sulphuric acid - (sulphur trioxide",r:"+++–+++/+––o–++o/"},
+{de:"Abgase - schwefeltrioxidhaltig (trocken)",en:"Exhaust gases - containing sulphur trioxide (dry)",r:"+++–+++/+––+–+++/"},
+{de:"Abwasser",en:"Waste water",r:"++++++++++++–+–––"},
+{de:"Acetaldehyd",en:"Acetaldehyde",r:"++++o/+o++++++///"},
+{de:"Acetamid",en:"Acetamide",r:"––––o++++++++++o–"},
+{de:"Acetessigester",en:"Acetoacetate",r:"–+++o/+o–––––––––"},
+{de:"Aceton",en:"Acetone",r:"++++o++o+++++o+/+"},
+{de:"Acetophenon",en:"Acetophenone",r:"++++o++o++++////–"},
+{de:"Acetylaceton",en:"Acetylactone",r:"++++o++o–––––––––"},
+{de:"Acetylchlorid",en:"Acetyl chloride",r:"–++++o+o++++///+–"},
+{de:"Acetylen",en:"Acetylene",r:"++++++++–––+–––––"},
+{de:"Acronaldispersionen (Polyacrylsäureester für Klebstoffe)",en:"Acronal dispersions (polyacrylate for adhesives)",r:"–+–––+–o+–––––+/–"},
+{de:"Acronallösungen",en:"Acronal solutions",r:"–––––––––––––––––"},
+{de:"Acrylnitril",en:"Acrylonitrile",r:"–+++oo+o/+++++//+"},
+{de:"Acrylsäureethylester",en:"Ethyl acrylate",r:"––––o/+o+++–++/+–"},
+{de:"Adipinsäure",en:"Adipic acid",r:"+++++++++++–/++o+"},
+{de:"Akkusäure (20 %-ige Schwefelsäure, wässrig)",en:"Battery acid (20% sulphuric acid, aqueous)",r:"–+–––++/+––/–++o–"},
+{de:"Alaune",en:"Alum",r:"++/–+++++++++++o–"},
+{de:"Albumin",en:"Albumin",r:"–+–––+–++–––––++–"},
+{de:"Alkalilauge, Ätznatronlösung",en:"Lye, caustic soda solution",r:"+–––o++/+––––+–––"},
+{de:"Allylalkohol",en:"Allyl alcohol",r:"–+–––++++––+–+++–"},
+{de:"Aluminiumacetat, wässrig",en:"Aluminium acetate, aqueous",r:"–+++o++++++–++++–"},
+{de:"Aluminiumchlorid, wässrig",en:"Aluminium chloride, aqueous",r:"+o/++++++++++++/+"},
+{de:"Aluminiumfluorid, wässrig",en:"Aluminium fluoride, aqueous",r:"–++–++++++++++++–"},
+{de:"Aluminiumnitrat, wässrig",en:"Aluminium nitrate, aqueous",r:"–++–++++++++++++–"},
+{de:"Aluminiumphosphat, wässrig",en:"Aluminium phosphate, aqueous",r:"––––++++–––––––––"},
+{de:"Aluminiumsulfat",en:"Aluminium sulfate",r:"+/+++++++++++++++"},
+{de:"Aluminumbromid",en:"Aluminium bromide",r:"––––++++–––––––––"},
+{de:"Ameisensäure",en:"Formic acid",r:"+–––––––+++/+++o–"},
+{de:"Ameisensäure (max. 10%/85°C)",en:"Formic acid (max. 10%/85°C)",r:"++++o++o––––––––+"},
+{de:"Ameisensäuremethylester",en:"Formic acid methyl ester",r:"+––––/+o–––––––––"},
+{de:"Amine-Gemisch",en:"Amine mixture",r:"–+++o/oo–––––––––"},
+{de:"Aminoessigsäure (Glykokoll)",en:"Aminoacetic acid (glycine)",r:"–+–––+–/+––––++/–"},
+{de:"Ammoniak",en:"Ammonia",r:"++/+oooo+++++++/+"},
+{de:"Ammoniaklösung",en:"Ammonia solution",r:"+–––––––+++–+++/–"},
+{de:"Ammoniumacetat - wässrig",en:"Ammonium acetate, aqueous",r:"–+–––++++––+–++––"},
+{de:"Ammoniumcarbonat, wässrig",en:"Ammonium carbonate, aqueous",r:"+/++o++/+++++++++"},
+{de:"Ammoniumchlorid",en:"Ammonium chloride",r:"+/++o++++++++++/+"},
+{de:"Ammoniumcitrat - wässrig",en:"Ammonium citrate, aqueous",r:"–+–––++++–––––+/–"},
+{de:"Ammoniumfloursilikat - wässrig",en:"Ammonium fluorosilicate, aqueous",r:"–+–––++++–––––+/–"},
+{de:"Ammoniumfluorid - wässrig",en:"Ammonium fluoride, aqueous",r:"–/–––+/++––+–++––"},
+{de:"Ammoniumformiat - wässrig",en:"Ammonium formate, aqueous",r:"–+–––++++–––––++–"},
+{de:"Ammoniumnitrat",en:"Ammonium nitrate",r:"++++–++++++++++/+"},
+{de:"Ammoniumoxalat - wässrig",en:"Ammonium oxalate, aqueous",r:"–+–––++++–––––+/–"},
+{de:"Ammoniumpersulfat",en:"Ammonium persulphate",r:"+/–+–++o+++–+++o–"},
+{de:"Ammoniumphosphat",en:"Ammonium phosphate",r:"++++–++++++++++o+"},
+{de:"Ammoniumrhodanid - wässrig",en:"Ammonium thiocyanate - aqueous",r:"–+–––+–++––+––++–"},
+{de:"Ammoniumsalze",en:"Ammonium salt",r:"––––o+++–––+–––––"},
+{de:"Ammoniumsulfat",en:"Ammonium sulphate",r:"++/+o++++++++++++"},
+{de:"Ammoniumsulfid",en:"Ammonium sulphide",r:"–++–o++++++++++++"},
+{de:"Amylacetat",en:"Amyl acetate",r:"–+++o++o+++++++++"},
+{de:"Amylalkohol",en:"Amyl alcohol",r:"+++++++o+++++++/+"},
+{de:"Amylborat",en:"Amyl borate",r:"–––––o++–––––––––"},
+{de:"Amylchlorid",en:"Amyl chloride",r:"–/+++o+o–––+–––––"},
+{de:"Amylchlornaphthalin",en:"Amyl chloronaphtalene",r:"––––+o+o–––––––––"},
+{de:"Amylnaphthalin",en:"Amyl naphtalene",r:"––––+o+o–––––––––"},
+{de:"Ananassaft",en:"Pineapple juice",r:"++++––––+++++++++"},
+{de:"Anilin",en:"Aniline",r:"++/++++o++++/+++o"},
+{de:"Anilinchlorhydrat - wässrig",en:"Aniline chlorohydrate - aqueous",r:"–o–––++/+––––+/o–"},
+{de:"Anilinfarbstoffe",en:"Aniline dye",r:"++/+//+o–––––––––"},
+{de:"Anilinhydrochlorid",en:"Aniline hydrochloride",r:"+–+–//+/–––––––––"},
+{de:"Anisol",en:"Anisole",r:"–+–––/+/+–––––o+–"},
+{de:"Anthracenöl",en:"Anthracene oil",r:"–+–––o+o+–––––o+–"},
+{de:"Anthrachinonsulfonsäure - wässrig",en:"Anthraquinonesulfonic acid - aqueous",r:"–/–––++/+–––––+/–"},
+{de:"Antifrogen-N",en:"Antifrogen-N",r:"++–––+–++–––––++–"},
+{de:"Antimonchlorid - wässrig",en:"Antimony chloride - aqueous",r:"–o–––++/+––+–++o–"},
+{de:"Apfelsaft, Apfelmus",en:"Apple juice, applesauce",r:"++––––––+––++++++"},
+{de:"Apfelsäure",en:"Malic acid",r:"+++++–++–––+–––––"},
+{de:"Apfelsinensaft",en:"Orange juice",r:"+–––––––+––+–––––"},
+{de:"Apfelwein",en:"Cider",r:"++–––+–++––––+++–"},
+{de:"Aprikosensaft",en:"Apricot juice",r:"++––––––+––+–––––"},
+{de:"Arabinsäure - wässrig",en:"Arabic acid - aqueous",r:"–+–––++++–––––+––"},
+{de:"Argon",en:"Argon",r:"++++++++–––+––––+"},
+{de:"Arsenige Säure - wässrig",en:"Arsenious acid, aqueous",r:"–+–––++++–––––+––"},
+{de:"Arsensäure, wässrig",en:"Arsenic acid, aqueous",r:"+++++++++++–+++/+"},
+{de:"Arsentrichlorid - wässrig",en:"Arsenic trichloride - aqueous",r:"–/–––++++–––––+o–"},
+{de:"Arylsilikate - wässrig",en:"Acrylate silicates - aqueous",r:"–+–––/+/+––––––––"},
+{de:"Ascorbinsäure - wässrig",en:"Ascorbic acid - aqueous",r:"–––––++++–––––+––"},
+{de:"Asparginsäure - wässrig",en:"Aspartic acid - aqueous",r:"–+–––++++–––––++–"},
+{de:"Asphalt",en:"Asphalt",r:"+++++o+/+++–++/+–"},
+{de:"ASTM-Kraftstoff A",en:"ASTM fuel A",r:"++–––o+/+–––––/+–"},
+{de:"ASTM-Kraftstoff B",en:"ASTM fuel B",r:"++–––o+/+–––––/+–"},
+{de:"ASTM-Kraftstoff C",en:"ASTM fuel C",r:"++–––o+/+–––––/+–"},
+{de:"ASTM-Öl Nr. 1",en:"ASTM oil no. 1",r:"++–––o+++–––––/+–"},
+{de:"ASTM-Öl Nr. 2",en:"ASTM oil no. 2",r:"++–––o+/+–––––/+–"},
+{de:"ASTM-Öl Nr. 3",en:"ASTM oil no. 3",r:"++–––o+/+–––––/+–"},
+{de:"ATE-Bremsflüssigkeit",en:"ATE brake fluid",r:"++–––++o+––+––/+–"},
+{de:"Äther",en:"Ether",r:"+–––––––+++–++++–"},
+{de:"Ätherische Öle",en:"Ethereal oils",r:"++–––o+o+–––––oo–"},
+{de:"Bariumchlorat - wässrig",en:"Barium chlorate - aqueous",r:"–+–––++++–––––+o–"},
+{de:"Bariumchlorid, wässrig",en:"Barium chloride, aqueous",r:"+++++++++++–++++–"},
+{de:"Bariumhydroxid, wässrig",en:"Barium hydroxide, aqueous",r:"+++++++++++–+++/+"},
+{de:"Bariumsalze",en:"Barium salt",r:"+–––++++–––+––––+"},
+{de:"Bariumsulfid",en:"Barium sulphide",r:"–+–o+++++++–////+"},
+{de:"Baumwollsamenöl",en:"Cottonseed oil",r:"++–––o+/+––––+o––"},
+{de:"Beizlösung",en:"Caustic solution",r:"+++–/o+o–––––––––"},
+{de:"Benzaldehyd - wässrig",en:"Benzaldehyde - aqueous",r:"++–––++/+––+–/+/–"},
+{de:"Benzidinsulfonsäuren - wässrig",en:"Benzidine sulfonic acids - aqueous",r:"–+–––++++–––––++–"},
+{de:"Benzin, Super",en:"Petrol, super",r:"+++++o++–––+–––––"},
+{de:"Benzin, unverbleit",en:"Petrol, unleaded",r:"+–––+–––/+++++//–"},
+{de:"Benzin, verbleit",en:"Petrol, leaded",r:"+–––+–––++++++o+–"},
+{de:"Benzoesäure - wässrig (gesättigt)",en:"Benzoic acid - aqueous (saturated)",r:"++–––++++––+–++o–"},
+{de:"Benzol",en:"Benzene",r:"++–––o+o+––+–/o+–"},
+{de:"Benzolsulfonsäure - wässrig",en:"Benzenesulfonic acid - aqueous",r:"++–––++++––o–++––"},
+{de:"Benzylalkohol",en:"Benzyl alcohol",r:"++–––++o+––+–++/–"},
+{de:"Benzylbutylphtalat - wässrig",en:"Benzyl butyl phthalate - aqueous",r:"–+–––o+o+–––––/+–"},
+{de:"Bergamottöl",en:"Bergamot oil",r:"++–––o–o+–––––oo–"},
+{de:"Bernsteinsäure - wässrig",en:"Succinic acid - aqueous",r:"–+–––++++––––++––"},
+{de:"Bienenwachs",en:"Beeswax",r:"++–––+–++–––––+o–"},
+{de:"Bier",en:"Beer",r:"+–––––––+++++++++"},
+{de:"Bisulfit (Natriumbisulfit) - wässrig",en:"Bisulfite (sodium bisulfite) - aqueous",r:"++–––++/+––+–++/–"},
+{de:"Bitumen",en:"Bitumen",r:"+–––––––++++++/+–"},
+{de:"Blausäure - wässrig",en:"Hydrocyanic acid - aqueous",r:"++–––/+/+––––++o–"},
+{de:"Bleiacetat - wässrig",en:"Lead acetate - aqueous",r:"++–––++/+––+–+++–"},
+{de:"Bleinitrat - wässrig",en:"Lead nitrate - aqueous",r:"–+–––++++–––––+––"},
+{de:"Bleitetraethyl (Tetraethylblei)",en:"Tetraethyl lead",r:"–+––+o+o++++++++–"},
+{de:"Bohröle (Schneidöle)",en:"Drilling fluids (cutting oils)",r:"++–––o+/+–––––//–"},
+{de:"Borax - wässrig",en:"Borax - aqueous",r:"–+–––++++––+–+++–"},
+{de:"Borfluorwasserstoffsäure (Fluorborsäure)",en:"Boron hydrofluoric acid (fluoroboric acid)",r:"–o–––+/++––––++o–"},
+{de:"Borsäure - wässrig",en:"Boric acid - aqueous",r:"++–––++++––+–+/o–"},
+{de:"Brennspiritus",en:"Alcohol, denatured",r:"+++++++++++–+++o+"},
+{de:"Brom (flüssig)",en:"Bromine (liquid)",r:"+/–––o+o+––o–+oo–"},
+{de:"Bromwasserstoffsäure - wässrig",en:"Hydrobromic acid - aqueous",r:"+o–––++o+––o–++o–"},
+{de:"Butadien (gasförmig)",en:"Butadiene (gaseous)",r:"++–––/+/+––+–+++–"},
+{de:"Butan (gasförmig und flüssig)",en:"Butane (gaseous and liquid)",r:"++–––o+++––+–oo+–"},
+{de:"Butandiol - wässrig (10 %)",en:"Butanediol - aqueous (10%)",r:"++–––+/++––+–+/+–"},
+{de:"Butanol (Butylalkohol)",en:"Butanol (butyl alcohol)",r:"++–––++/+––+–+++–"},
+{de:"Butindiol",en:"Butanediol",r:"–/–––/–/+––+––++–"},
+{de:"Butoxyl (Methoxybutylacetat)",en:"Butoxyl (methoxybutyl acetate)",r:"–+–––/–++–––––+––"},
+{de:"Butter",en:"Butter",r:"++–––+–++––––+++–"},
+{de:"Buttermilch",en:"Buttermilk",r:"++–––+–++–––––/o–"},
+{de:"Buttersäure - wässrig",en:"Butyric acid - aqueous",r:"++–––///+––+–+o/–"},
+{de:"Butylacetat",en:"Butyl acetate",r:"++–––++o+––+–+o+–"},
+{de:"Butylalkohol (Butanol)",en:"Butyl alcohol (butanol)",r:"++–––++/+––+–+++–"},
+{de:"Butylen (flüssig)",en:"Butylene (liquid)",r:"++–––/+++––––+++–"},
+{de:"Butylphtalat",en:"Butyl phthalate",r:"–+–––o+o+–––––/+–"},
+{de:"Calciumbisulfit - wässrig",en:"Calcium bisulfite - aqueous",r:"–+–––++++––+––+o–"},
+{de:"Calciumchlorid - wässrig",en:"Calcium chloride - aqueous",r:"–/–––++++––+–++/–"},
+{de:"Calciumhydroxid (gel. Kalk) - wässrig - (Kalkmilch)",en:"Calcium hydroxide (lime solute) - aqueous - (lime milk)",r:"–+–––++++––+–+/+–"},
+{de:"Calciumhypochlorit (Chlorkalk) - wässrig",en:"Calcium hypochlorite (chlorinated lime) - aqueous",r:"+/–––++o+––+–++o–"},
+{de:"Calciumnitrat - wässrig",en:"Calcium nitrate - aqueous",r:"+/–––++++––+–+++–"},
+{de:"Caprylaldehyd (Hexanal)",en:"Caprylaldehyde (hexanal)",r:"––––o/+––––––––––"},
+{de:"Carbitol",en:"Carbitol",r:"––––//+/–––––––––"},
+{de:"Carbolineum (Teeröl; Pflanzenschutzmittel)",en:"Carbolineum (creosote; pesticides)",r:"++–––/+/+–––––o+–"},
+{de:"Carbolsäure (Phenol)",en:"Carbolic acid (phenol)",r:"–++++o+o+++/++/o–"},
+{de:"Caro’sche Säure - wässrig",en:"Caro's acid - aqueous",r:"–o–––o–o+–––––oo–"},
+{de:"Cellosolve (Glykolethylether)",en:"Cellosolve (glycol ethyl ether)",r:"–+–––o+o+––––+o+–"},
+{de:"Celluloselacke",en:"Cellulose lacquers",r:"–+–––/+o+–––––/+–"},
+{de:"Cetan (Hexadecan)",en:"Cetan (hexadecan)",r:"––––+o++–––––––––"},
+{de:"Champheröl",en:"Campher oil",r:"–+–––o/++–––––o––"},
+{de:"Chlor (flüssig)",en:"Chlorine (liquid)",r:"–+–––o+o+––o–+oo–"},
+{de:"Chlor (gasförmig) - feucht (Chlorwasser)",en:"Chlorine (gas) - wet (chlorine water)",r:"+o–––o/o+––o–/oo–"},
+{de:"Chlor (gasförmig) - trocken",en:"Chlorine (gas) - dry",r:"++–––o+o+––+–+oo–"},
+{de:"Chloraceton",en:"Chloroacetone",r:"+–––o++o–––––––––"},
+{de:"Chloralhydrat (Chloral) - wässrig",en:"Chloral hydrate (chloral) - aqueous",r:"–/–––/+o+––+–ooo–"},
+{de:"Chlorbenzol",en:"Chlorobenzene",r:"+/+++o+o++++++/+o"},
+{de:"Chlorbleichlauge (max.10%/85°C)",en:"Sodium hypochlorite (bleach) (max. 10%/85°C)",r:"+/o++/+/––––––––o"},
+{de:"Chlorbrommethan",en:"Bromochloromethane",r:"+++++/+o–––––––––"},
+{de:"Chlorbutadien (Chloropren)",en:"Chlorobutadiene (chloroprene)",r:"+++–+o+o–––––––––"},
+{de:"Chlordioxid",en:"Chlorine dioxide",r:"+/o++o+o–––––––––"},
+{de:"Chlordiphenyl",en:"Chlorodiphenyl",r:"–+–––/–++–––––+––"},
+{de:"Chloressigsäure",en:"Chloroacetic acid",r:"+//+o/+o+++++++o+"},
+{de:"Chloressigsäureethylester",en:"Chloroacetic acid ethyl ester",r:"+–––+o+o–––––––––"},
+{de:"Chlorethanol (Ethylenchlorhydrin)",en:"Chloroethanol (ethylene chlorohydrin)",r:"–+–––o+o+––/–++/–"},
+{de:"Chlorgas",en:"Chlorine gas",r:"+/–++o+o–––/–––––"},
+{de:"Chlorhaltige Lösungsmittel",en:"Chloric solvent",r:"+–––+o+o–––––––––"},
+{de:"Chlorkalk (Calciumhypochlorit) - wässrig",en:"Chlorine lime (calcium hypochlorite) - aqueous",r:"+/–––++o+––+–++o–"},
+{de:"Chlormethan (Methylchlorid)",en:"Chloromethane (methyl chloride)",r:"–+–––o+o+––+–oo/–"},
+{de:"Chlornaphthalin",en:"Chloronaphthalene",r:"+–––+o+o–––––––––"},
+{de:"Chloroform (Trichlormethan)",en:"Chloroform (trichlormethane)",r:"++/++o+o++++/++/o"},
+{de:"Chlorphenol (O-Chlorphenol)",en:"Chlorophenol (O-chlorophenol)",r:"+++++o+o–––––––––"},
+{de:"Chlorphenoxyessigsäure",en:"Chlorophenoxyacetic acid",r:"–+–––+–++–––––+––"},
+{de:"Chlorsäure - wässrig",en:"Chloric acid - aqueous",r:"–o–––/+o+––––+oo–"},
+{de:"Chlorsulfonsäure",en:"Chlorosulphuric acid",r:"+/++oo+o+++o++ooo"},
+{de:"Chlortoluol",en:"Chlortoluol",r:"+++++o+o+++–++oo–"},
+{de:"Chlorwasser (Chlor - feucht)",en:"Chlorine water (chlorine - moist)",r:"+o–––o/o+––o–/oo–"},
+{de:"Chlorwasserstoffgas",en:"Hydrogen chloride gas",r:"++–––/+/+––+–++o–"},
+{de:"Chlorxylenol",en:"Chloroxylenol",r:"–+–––o+o+––––––––"},
+{de:"Cholinchlorid - wässrig",en:"Choline chloride - aqueous",r:"–––––+–++–––––/––"},
+{de:"Chromalaun",en:"Chrome alum",r:"+/++++++––––––––+"},
+{de:"Chromsäure (50%)",en:"Chromic acid (50%)",r:"+oo++/+o++++++/oo"},
+{de:"Chromsulfat - wässrig",en:"Chromium sulphate - aqueous",r:"–/–––++++–––––+/–"},
+{de:"Citral (Citronellöl)",en:"Citral (lemon grass oil)",r:"–+–––o–o+–––––o+–"},
+{de:"Cola-Essenz (Coca-Cola)",en:"Cola essence (Coca-Cola)",r:"++++o++o–––––––––"},
+{de:"Cyankali (Kaliumcyanid) - wässrig",en:"Potassium cyanide - aqueous",r:"++–––++++––+–+++–"},
+{de:"Cyclanone (Fettalkoholsulfonat)",en:"Cyclanone (fatty alcohol sulfonate)",r:"–+–––+–++–––––++–"},
+{de:"Cyclohexan",en:"Cyclohexane",r:"–++++o++++++++/++"},
+{de:"Cyclohexanol",en:"Cyclohexanol",r:"–++++o++++++++/++"},
+{de:"Cyclohexanon",en:"Cyclohexanone",r:"–+++o/+o++++++/+–"},
+{de:"Cymol",en:"Cymene",r:"–+–––o–o+–––––o+–"},
+{de:"Decane",en:"Decane",r:"––––+o++–––––––––"},
+{de:"Dekahydronaphtalin (Dekalin)",en:"Decahydronaphthalene (decalin)",r:"–+–––o+o+–––––/+–"},
+{de:"Desmodur T",en:"Desmodur T",r:"–+–––o–o+––––––––"},
+{de:"Desmophen",en:"Desmophen",r:"–+–––+–++––––––––"},
+{de:"Dextrin - wässrig",en:"Dextrin - aqueous",r:"–+–––++++––––+++–"},
+{de:"Dextrose (Glukose) - wässrig",en:"Dextrose (glucose) - aqueous",r:"–+–––++++––+––++–"},
+{de:"Diacetonalkohol - wasserfrei",en:"Diacetone alcohol - anhydrous",r:"–+–––++o+––––––/–"},
+{de:"Dibenzylsebacat",en:"Dibenzylsebacat",r:"––––//+o–––––––––"},
+{de:"Dibromdifluormethan",en:"Dibromdifluormethane",r:"–––––/+o–––––––––"},
+{de:"Dibromethylbenzol",en:"Dibromethylbenzene",r:"––––+o+o–––––––––"},
+{de:"Dibutylamin",en:"Dibutylamine",r:"––––oo/o–––––––––"},
+{de:"Dibutylether",en:"Dibutyl ether",r:"––––oo+o–––+––––o"},
+{de:"Dibutylphthalat (Palatinol C)",en:"Dibutyl phthalate (palatinol C)",r:"–+++o/+o–––+––––/"},
+{de:"Dibutylsebacat",en:"Dibutyl sebacate",r:"––––//+o––––––––+"},
+{de:"Dichlorbenzol",en:"Dichlorobenzene",r:"+–––+o+o+++/++/+/"},
+{de:"Dichlorbutan (Tetramethylenchlorid)",en:"Dichlorobutane",r:"+–––+o+/–––––––––"},
+{de:"Dichlorethylen",en:"Dichloroethylene",r:"++–––o+o+––+–+o+–"},
+{de:"Dichlorisopropylether",en:"Dichlordiisopropylether",r:"+–––oo+o–––––––––"},
+{de:"Dichlormethan (Methylenchlorid)",en:"Dichloromethane (methylene chloride)",r:"++–––o+o+––/–ooo–"},
+{de:"Dicyclohexylamin",en:"Dicyclohexylamine",r:"––––oo–o–––––––––"},
+{de:"Dicyclohexylammoniumnitrit",en:"Dicyclohexylammonium nitrite",r:"–+–––++++––––––––"},
+{de:"Dieselkraftstoff",en:"Diesel fuel",r:"+++++o++++++++++/"},
+{de:"Dieselöl",en:"Diesel oil",r:"++–––o+/+––+–+/+–"},
+{de:"Diethylamin",en:"Diethylamine",r:"––––oo+o+++++o++–"},
+{de:"Diethylenglykol",en:"Diethylenglycol",r:"++++++++++++++++–"},
+{de:"Diethylether (Ether)",en:"Diethyl ether (ether)",r:"–+–––o+o+––+–+o+–"},
+{de:"Diethylsebacat",en:"Diethyl sebacate",r:"––––+++o–––––––––"},
+{de:"Difluordibrommethan",en:"Difluoro-dibromomethane",r:"–––––/–o–––––––––"},
+{de:"Diisobutylen",en:"Diisobutylene",r:"–++++o+/–––––––––"},
+{de:"Diisobutylketon",en:"Diisobutyl ketone",r:"++++o++o++++/o/+/"},
+{de:"Diisooctylsebacat",en:"Diisooctyl sebacate",r:"––––/o+o–––––––––"},
+{de:"Diisopropylketon",en:"Diisopropyl ketone",r:"++++o++o–––––––––"},
+{de:"Dimethylamin",en:"Dimethylamine",r:"–+–––/+o+––+–o/o–"},
+{de:"Dimethylether (Methylether)",en:"Dimethylether (methyl ether)",r:"–+++++++++++++o++"},
+{de:"Dimethylformamid (DMF)",en:"Dimethyl formamide (DMF)",r:"––––o++o++++/o+//"},
+{de:"Dimethylhydrazin",en:"Dimethyl hydrazine",r:"––––o++o–––––––––"},
+{de:"Dimethylphthalat",en:"Dimethyl phthalate",r:"––––//+o––––––––+"},
+{de:"Dimethylsulfoxid (DMSO)",en:"Dimethyl sulfoxide (DMSO)",r:"––––––+–+––/–o–/–"},
+{de:"Dinitrotoluol",en:"Dinitrotoluol",r:"––––oo+o–––––––––"},
+{de:"Dioctylphthalat (DOP)",en:"Dioctyl phthalate (DOP)",r:"––––+++o–––+––––/"},
+{de:"Dioctylsebacat (DOS)",en:"Dioctyl sebacate (DOS)",r:"––––+++o–––––––––"},
+{de:"Dioxan",en:"Dioxane",r:"++++o/+o+++++o/++"},
+{de:"Dioxolan",en:"Dioxolane",r:"––––o/+o–––––––––"},
+{de:"Diphenyl",en:"Diphenyl",r:"+++++o+o–––––––––"},
+{de:"Diphenylether",en:"Diphenyl ether",r:"––––+o+o++++++o++"},
+{de:"Dissousgas (Acetylen + Aceton)",en:"Dissousgas (acetylene + acetone)",r:"–+–––+–o+–––––/+–"},
+{de:"Distickstoffmonoxyd (Lachgas, Stickoxydul)",en:"Dinitrogen monoxide (laughing gas, nitrous oxide)",r:"–+–––++++––+–+++–"},
+{de:"Dodecylalkohol",en:"Dodecyl alcohol",r:"+++–++++–––––––––"},
+{de:"Druckluftversorgung",en:"Compressed-air supply",r:"+++++o++––––––––+"},
+{de:"Edelgase",en:"Noble gases",r:"+/+++++++++++++++"},
+{de:"Eisen(II)Sulfat, wässrig",en:"Iron(II)sulphate, aqueous",r:"++/+++++–––+––––+"},
+{de:"Eisen(III)Chlorid, wässrig",en:"Iron(III)chloride, aqueous",r:"+oo+++++–––/––––+"},
+{de:"Eisenchlorid",en:"Iron chloride",r:"+o––+++++++++++++"},
+{de:"Eisennitrat",en:"Iron nitrate",r:"++–++++++++++++++"},
+{de:"Eiweißlösungen",en:"Protein solutions",r:"++–––+–++–––––++–"},
+{de:"Entwicklerbad",en:"Developing bath",r:"–+––+/++–––––––––"},
+{de:"Epichlorhydrin",en:"Epichlorohydrin",r:"––––oo+o–––+–––––"},
+{de:"Epoxidharze",en:"Epoxide resin",r:"++++o++–––––––––+"},
+{de:"Erdgas",en:"Natural gas",r:"+++++o++–––+––––+"},
+{de:"Erdnußöl",en:"Peanut oil",r:"+++++o++–––+––––/"},
+{de:"Erdöl",en:"Crude oil",r:"+++++o++++++/+/+o"},
+{de:"Essig",en:"Vinegar",r:"++++o++o+++++++/+"},
+{de:"Essigester (Ethylacetat)",en:"Ethyl acetate",r:"++–––//o+––+–/o/–"},
+{de:"Essigsäure",en:"Acetic acid",r:"///+oo+o+++o+++o+"},
+{de:"Essigsäure (max.6%/85°C)",en:"Acetic acid (max. 6%/85°C)",r:"++++o++–––––––––+"},
+{de:"Essigsäureanhydrid",en:"Acetic anhydride",r:"+–––o++o+++–+o/o/"},
+{de:"Essigsaures Kali",en:"Acetic potassium",r:"–+++o++/–––––––––"},
+{de:"Essigsaures Natron",en:"Acetic soda",r:"––––o++/–––––––––"},
+{de:"Ethan",en:"Ethane",r:"+++++o++–––+–––––"},
+{de:"Ethanol (Ethylalkohol)",en:"Ethanol (ethyl alcohol)",r:"++++o+++++++++/o+"},
+{de:"Ethanolamin (Colamin)",en:"Ethanolamine (colamine)",r:"––––o/+/–––––––––"},
+{de:"Ether (Diethylether)",en:"Ether (Diethyl ether)",r:"++–––o+o+––+–+o+–"},
+{de:"Ethylacetat",en:"Ethyl acetate",r:"+–––o/+o+++++o/+–"},
+{de:"Ethylacrylsäure",en:"Ethyl acrylic acid",r:"–––––/–o–––––––––"},
+{de:"Ethylalkohol - Gärungsmaische",en:"Ethyl alcohol - fermented mash",r:"++–––++++––+–++/–"},
+{de:"Ethylalkohol - vergällt o abh. von Vergällungsmittel",en:"Ethyl alcohol - denatured or dep. on denaturant",r:"++–––/+/+––+––+/–"},
+{de:"Ethylalkohol + Essigsäure",en:"Ethyl alcohol + acetic acid",r:"++–––++/+––+–++o–"},
+{de:"Ethylbenzoat",en:"Ethyl benzoate",r:"––––+o+o–––––––––"},
+{de:"Ethylbenzol",en:"Ethyl benzene",r:"––––+++o+++–///+–"},
+{de:"Ethylbromid",en:"Ethyl bromide",r:"––––+o+/–––––––––"},
+{de:"Ethylcellulose",en:"Ethyl cellulose",r:"––––o/+/–––––––––"},
+{de:"Ethylchlorid",en:"Ethyl chloride",r:"+–––+++++++–++//–"},
+{de:"Ethylcyclopentan",en:"Ethyl cyclopentane",r:"––––+o++–––––––––"},
+{de:"Ethylen",en:"Ethylene",r:"+++++o++–––+–––––"},
+{de:"Ethylenbromid - wasserfrei",en:"Ethyl bromide - anhydrous",r:"–+–––o+o+––o–+o+–"},
+{de:"Ethylenchlorhydrin",en:"Ethylene chlorohydrine",r:"––––+/+o+++–++/o–"},
+{de:"Ethylenchlorid",en:"Ethylene chloride",r:"––––/o+o–––––––––"},
+{de:"Ethylendiamin",en:"Ethylene diamine",r:"––––o+o++++++++o–"},
+{de:"Ethylendibromid",en:"Ethylene dibromide",r:"––––+o+o–––––––––"},
+{de:"Ethylendichlorid",en:"Ethylene dichloride",r:"––––+o+o–––––––––"},
+{de:"Ethylenglycol",en:"Ethylene glycol",r:"++++++++++++++++–"},
+{de:"Ethylenoxid",en:"Ethylene oxide",r:"––––oooo++++++/+–"},
+{de:"Ethylether",en:"Ethyl ether",r:"––––oo+o++++++o+–"},
+{de:"Ethylformiat",en:"Ethyl formate",r:"–+–––/+o+––––+/+–"},
+{de:"Ethylmercaptan",en:"Ethyl mercaptane",r:"––––/–+o–––––––––"},
+{de:"Ethylpentachlorbenzol",en:"Ethyl pentachloride benzene",r:"––––+o+o–––––––––"},
+{de:"Ethylsilikat",en:"Ethyl silicate",r:"––––++++–––––––––"},
+{de:"Färbereinetzmittel (Nekal BX)",en:"Dyeing wetting agents (nekal BX)",r:"–+–––+/++–––––+––"},
+{de:"Ferricyankalium (Kaliumferricyanid)",en:"Potassium ferricyanide",r:"–+–––++++––+–+++–"},
+{de:"Fettalkohole",en:"Fatty alcohols",r:"–+–––/+++–––––/+–"},
+{de:"Fettalkoholsulfate (sulfatierte Fette) - wässrig",en:"Fatty alcohol sulfates (sulfated fats) - aqueous",r:"–+–––/+++––––++/–"},
+{de:"Fette, fette Öle",en:"Fats, fatty oils",r:"++++–o+/+––+–+/+–"},
+{de:"Fettsäuren",en:"Fatty acids",r:"+++++o+/++++++++/"},
+{de:"Fichtennadelöl",en:"Pine needle oil",r:"++++–o+/+–––––+––"},
+{de:"Firnisse",en:"Varnishes",r:"–+–––o+/+–––––o+–"},
+{de:"Fixiersalz",en:"Fixing salt",r:"–+––++++–––––––––"},
+{de:"Fluor (feucht)",en:"Fluorine (wet)",r:"–/–––ooo/––o–ooo–"},
+{de:"Fluor (trocken)",en:"Fluorine (dry)",r:"–+–––o/o+––o–/oo–"},
+{de:"Fluorborsäure (Borfluorwasserstoffsäure)",en:"Fluoroboric acid (boron hydrofluoric acid)",r:"–o–––+/++––––++o–"},
+{de:"Fluorkieselsäure",en:"Fluorosilicic acid",r:"––––+++/+++–+++o+"},
+{de:"Fluorkohlenstoffe (Frigen)",en:"Fluorocarbons (Freon)",r:"+–––––––+––+–/–+–"},
+{de:"Flüssig-Petroleum-Gas (LPG)",en:"Liquid petroleum gas (LPG)",r:"+++++o++–––––––––"},
+{de:"Flusssäure (45%)",en:"Hydrofluoric acid (45%)",r:"+–––––––+++–+++o–"},
+{de:"Formaldehyd",en:"Formaldehyde",r:"++/–o/+o–––+––––+"},
+{de:"Formaldehyd (40%)",en:"Formaldehyde (40%)",r:"+–––––––+++–+++/–"},
+{de:"Foto - Emulsionen, Entwickler, Fixierbäder",en:"Photo - emulsions, developers, fixing baths",r:"–––––/+/+––––++––"},
+{de:"Freon TF (Freon 113)",en:"Freon TF (Freon 113)",r:"+++––oo++––+–+o+–"},
+{de:"Frigen 12 B1 (Freon 12 B1)",en:"Frigene 12 B1 (Freon 12 B1)",r:"+++––o+++––+–+o+–"},
+{de:"Frigen 13",en:"Frigene 13",r:"+++––o/++––+–oo––"},
+{de:"Frigen 13 B 1 (Halon 1301)",en:"Frigene 13 B 1 (Halon 1301)",r:"+++––o+++––––/o+–"},
+{de:"Frigen 22",en:"Frigene 22",r:"+++––o/o+––+–oo+–"},
+{de:"Frigen 23",en:"Frigene 23",r:"+++––oo++––––/o––"},
+{de:"Frigen 502",en:"Frigene 502",r:"+++––o/o+––+–//+–"},
+{de:"Frigenersatz HFCKW 123",en:"Frigene substitute HFCKW 123",r:"+++––ooo+––––––––"},
+{de:"Frigenersatz HFCKW 134a",en:"Frigene substitute HFCKW 134a",r:"+++–––o–+––+–––––"},
+{de:"Frostschutzmittel KFZ",en:"Antifreeze, automotive",r:"+–+––++/+––+–++––"},
+{de:"Fruchtsäfte",en:"Fruit juices",r:"+++––/–/+––+––//–"},
+{de:"Fumarsäure",en:"Fumaric acid",r:"––––+–++–––––––––"},
+{de:"Furfural (Furanaldehyd)",en:"Furfural (furanaldehyde)",r:"+/++o/+o+++–+/o/–"},
+{de:"Furfurylalkohol",en:"Furfuryl alcohol",r:"–––––/+o–––+––––+"},
+{de:"Furylcarbinol",en:"Furyl carbinol",r:"–––––/+o–––––––––"},
+{de:"Galvanik-Bad (Chrom)",en:"Galvanic bath, chromium",r:"––––+o+o––––––––+"},
+{de:"Gaswasser",en:"Ammonia water",r:"–+––––––+––––––––"},
+{de:"Gelatine, wässrig",en:"Gelatin, aqueous",r:"++–––o–++––––––––"},
+{de:"Gerbsäure",en:"Tannic acid",r:"+++++/+/+++++++++"},
+{de:"Glucose",en:"Glucose",r:"++++++++–––+––––+"},
+{de:"Glycerin",en:"Glycerol",r:"+++++++++++++++++"},
+{de:"Glycerintriacetat",en:"Glycerol triacetate",r:"––––o++/–––––––––"},
+{de:"Glykokoll (Aminoessigsäure) - wässrig",en:"Glycine (amino acetic acid) - aqueous",r:"–+–––+–/+––––++/–"},
+{de:"Glykol",en:"Glycol",r:"+++++++++++++++++"},
+{de:"Glykolethylether (Cellosolve)",en:"Glycol ethyl ether (cellosolve)",r:"–+–––o+o+––––+o+–"},
+{de:"Glykolsäure - wässrig",en:"Glycolic acid - aqueous",r:"–/–––++++––+–++o–"},
+{de:"Haarshampoo",en:"Hair shampoo",r:"++++–/–/+–––––/+–"},
+{de:"Harnstoff, wässrig",en:"Urea, aqueous",r:"++/++++++++++++++"},
+{de:"Hefe, wässrig",en:"Yeast, aqueous",r:"+++++++++++++++++"},
+{de:"Heizöl, leicht",en:"Fuel oil, light",r:"+++++o++++++++++/"},
+{de:"Heizöl, schwer",en:"Fuel oil, heavy",r:"+++++o+o++++++++o"},
+{de:"Helium",en:"Helium",r:"++++++++–––+––––+"},
+{de:"Heptan",en:"Heptane",r:"+//++o++++++++/+/"},
+{de:"Hexaldehyd",en:"Hexaldehyde",r:"––––o++o–––––––––"},
+{de:"Hexamethylentetramin - wässrig",en:"Hexamethylenetetramine - aqueous",r:"–+–––++++–––––++–"},
+{de:"Hexan",en:"Hexane",r:"+++++o++++++++/+/"},
+{de:"Hexylalkohol",en:"Hexyl alcohol",r:"+++++o+++++–+++/+"},
+{de:"Himbeer-Essenz",en:"Raspberry essence",r:"+++++++o–––––––––"},
+{de:"Hochofengas",en:"Blast furnace gas",r:"––––+o+o–––––––––"},
+{de:"Holzessig",en:"Pyroligneous acid",r:"––––o/+o–––––––––"},
+{de:"Holzteer, Holzöl (Imprägnieröle)",en:"Wood tar, wood oil (impregnating oil)",r:"++–––o+o+–––––o––"},
+{de:"Huminsäuren",en:"Humic acids",r:"–+–––+–++––+––+o–"},
+{de:"Hydraulikfl. (Wasser in Öl, HSB)",en:"Hydraulic fluid (water in oil, HSB)",r:"++–––o+/+–––––++–"},
+{de:"Hydraulikfl. Mineralöle (H, H-L, H-LP)",en:"Hydraulic fluid, mineral oils (H, H-L, H-LP)",r:"++–––o+/+–––––++–"},
+{de:"Hydraulikfl. Phosphorsäureester (HSD)",en:"Hydraulic fluid, phosphoric esters (HSD)",r:"++–––/+o+–––––oo–"},
+{de:"Hydraulikfl. Polyglykol-Wasser (HSC)",en:"Hydraulic fluid, polyglycol water (HSC)",r:"++–––++++–––––++–"},
+{de:"Hydraulikfl. Wasser-Öl-Emulsionen (HSA)",en:"Hydraulic fluid, water-oil emulsions (HSA)",r:"++–––o+/+–––––++–"},
+{de:"Hydrazin",en:"Hydrazine",r:"–//–o++o–––+–––––"},
+{de:"Hydrazinhydrat - wässrig",en:"Hydrazine hydrate - aqueous",r:"–o–––++o+––+–/o––"},
+{de:"Hydrochinon",en:"Hydroquinone",r:"––––/o+o+++++++o–"},
+{de:"Hydroxylaminsulfat - wässrig",en:"Hydroxylamine sulphate - aqueous",r:"–+–––++++–––––++–"},
+{de:"Imprägnieröle (Holzteer)",en:"Impregnating oils (wood tar)",r:"++–––o+o+–––––o––"},
+{de:"Isobutanol",en:"Isobutanol",r:"++–––++/+––+–+++–"},
+{de:"Isobutylalkohol",en:"Isobutyl alcohol",r:"+++++++o+++–+++o+"},
+{de:"Isododecan",en:"Isododecane",r:"+++++o++–––––––––"},
+{de:"Isooctan",en:"Isooctane",r:"+++++o+++++++++++"},
+{de:"Isooctanol",en:"Isooctanol",r:"+–––++++–––––––––"},
+{de:"Isophoron",en:"Isophorone",r:"––––o++o–––––––––"},
+{de:"Isopropanol",en:"Isopropanol",r:"+++++++/+++++++/+"},
+{de:"Isopropylacetat",en:"Isopropyl acetate",r:"––––o/+o+++++//+–"},
+{de:"Isopropylbenzol",en:"Isopropyl benzene",r:"+++++o+o+++–++/+–"},
+{de:"Isopropylchlorid",en:"Isopropyl chloride",r:"––––+o+o–––––––––"},
+{de:"Isopropylether",en:"Isopropyl ether",r:"++++oo+/++++++o+o"},
+{de:"Jod",en:"Iodine",r:"+//++/+/+++/++/o+"},
+{de:"Jod+Jodkalium - wässrig",en:"Iodine + potassium iodide - aqueous",r:"+/–––/+/+––/–+/o–"},
+{de:"Jodtinktur",en:"Tincture of iodine",r:"+/–––///+––/–+/o–"},
+{de:"Kaffee",en:"Coffee",r:"++++++++–––+––––+"},
+{de:"Kalilauge (50%)",en:"Caustic potash (50%)",r:"///oo++/–––+––––/"},
+{de:"Kalilauge (max. 10%/85°C)",en:"Caustic potash (max. 10%/85°C)",r:"+///o++/–––+––––+"},
+{de:"Kaliumacetat (essigsaures Kali)",en:"Potassium acetate (acetic potash)",r:"–+++o++/–––––––––"},
+{de:"Kaliumacetat, wässrig",en:"Potassium acetate, aqueous",r:"–+++o++o+++–+++/–"},
+{de:"Kalium–Aluminiumsulfat (Alaun) - wässrig",en:"Potassium aluminum sulfate (alum) - aqueous",r:"–+–––++++––+–+++–"},
+{de:"Kaliumbromat - wässrig",en:"Potassium bromate - aqueous",r:"–+–––++++––+–++––"},
+{de:"Kaliumbromid - wässrig",en:"Potassium bromide - aqueous",r:"–/–––++++––+–++o–"},
+{de:"Kaliumcarbonat (Pottasche) - wässrig",en:"Potassium carbonate (potash) - aqueous",r:"–+–––++++––+–o+/–"},
+{de:"Kaliumchlorat - wässrig",en:"Potassium chlorate - aqueous",r:"–/–––/+/+––+–/+/–"},
+{de:"Kaliumchlorid, wässrig",en:"Potassium chloride, aqueous",r:"+/+++++++++++++++"},
+{de:"Kaliumchromat - wässrig",en:"Potassium chromate - aqueous",r:"–/–––++/+––––++o–"},
+{de:"Kaliumcyanid, wässrig",en:"Potassium cyanide, aqueous",r:"++/+++++––––––––+"},
+{de:"Kaliumdichromat",en:"Potassium dichromate",r:"–+/++++++++++++/–"},
+{de:"Kaliumhydrogenfluorid - wässrig",en:"Potassium hydrogen fluoride - aqueous",r:"–+–––+–++–––––+o–"},
+{de:"Kaliumhydroxid (Kalilauge) - wässrig",en:"Potassium hydroxide (caustic potash) - aqueous",r:"++–––++o+––+–o+/–"},
+{de:"Kaliumhypochlorit - wässrig",en:"Potassium hypochlorite - aqueous",r:"+/–––++o+––+–+/o–"},
+{de:"Kaliumjodid - wässrig",en:"Potassium iodide - aqueous",r:"–/–––++++––––++––"},
+{de:"Kaliumkupfercyanid",en:"Potassium copper cyanide",r:"––––++++–––––––––"},
+{de:"Kaliumnitrat",en:"Potassium nitrate",r:"+//++++++++++++/+"},
+{de:"Kaliumnitrit - wässrig",en:"Potassium nitrite - aqueous",r:"–+–––++++––+–+++–"},
+{de:"Kaliumperchlorat, wässrig",en:"Potassium perchlorate, aqueous",r:"+++/+++o+++++++++"},
+{de:"Kaliumpermanganat - wässrig",en:"Potassium permanganate - aqueous",r:"++–––o+o+––+–+/o–"},
+{de:"Kaliumperoxid - wässrig",en:"Potassium peroxide - aqueous",r:"–+–––o+o+––+––/o–"},
+{de:"Kaliumpersulfat - wässrig",en:"Potassium persulfate - aqueous",r:"–+–––++o+––+–/+o–"},
+{de:"Kaliumphosphate - wässrig",en:"Potassium phosphates - aqueous",r:"–+–––++++––+–++/–"},
+{de:"Kaliumsalze",en:"Potassium salts",r:"––––++++–––––––––"},
+{de:"Kaliumsulfat",en:"Potassium sulphate",r:"++/+++++–––/––––+"},
+{de:"Kaliumsulfid - wässrig",en:"Potassium sulphide - aqueous",r:"–+–––++++––+–/+/–"},
+{de:"Kaliumsulfit",en:"Potassium sulphite",r:"–+/+++++––––––––+"},
+{de:"Kalkbleiche",en:"Lime bleach",r:"––––++++–––––––––"},
+{de:"Kalziumacetat",en:"Calcium acetate",r:"––––o++/–––––––––"},
+{de:"Kalziumacetat, wässrig",en:"Calcium acetate, aqueous",r:"––––o+++–––––––––"},
+{de:"Kalziumbisulfit",en:"Calcium bisulphite",r:"––––+o++–––––––––"},
+{de:"Kalziumcarbonat",en:"Calcium carbonate",r:"––––++++–––––––––"},
+{de:"Kalziumchlorid, wässrig",en:"Calcium chloride, aqueous",r:"––––++++–––+–––––"},
+{de:"Kalziumcyanid",en:"Calcium cyanide",r:"–––––+++–––––––––"},
+{de:"Kalziumhydroxid, wässrig",en:"Calcium hydroxide, aqueous",r:"––––o+++–––––––––"},
+{de:"Kalziumhypochlorid",en:"Calcium hypochloride",r:"––––+++o–––––––––"},
+{de:"Kalziumhypochlorit",en:"Calcium hypochlorite",r:"––––+++o–––––––––"},
+{de:"Kalziumnitrat (Kalksalpeter)",en:"Calcium nitrate",r:"+–––++++–––––––––"},
+{de:"Kalziumphosphat, wässrig",en:"Calcium phosphate, aqueous",r:"––––++++–––––––––"},
+{de:"Kalziumsalze",en:"Calcium salt",r:"––––++++–––––––––"},
+{de:"Kalziumsilikat",en:"Calcium silicate",r:"––––++++–––––––––"},
+{de:"Kalziumsulfid",en:"Calcium sulphide",r:"––––++++–––––––––"},
+{de:"Kalziumsulfit",en:"Calcium sulphite",r:"––––++++–––––––––"},
+{de:"Kalziumthiosulfat",en:"Calcium thiosulphate",r:"––––+++/–––––––––"},
+{de:"Kerosin , Flugbenzin",en:"Kerosene",r:"+++–+o++++++/+/++"},
+{de:"Kiefernnadelöl (Fichtennadelöl)",en:"Pine oil (pine needle oil)",r:"++++–o+/+–––––+––"},
+{de:"Kieselfluorwasserstoffsäure (Kieselflußsäure)",en:"Fluorosilicic acid (Hydrofluorosilicic acid)",r:"//–––/+/+––––++o–"},
+{de:"Knochenöl",en:"Neatsfoot oil",r:"++++–o+/+–––––++–"},
+{de:"Kobaltchlorid",en:"Cobalt chloride",r:"––––++++–––––––––"},
+{de:"Kochsalz (Natriumchlorid)",en:"Table salt (sodium chloride)",r:"+/++–++++––+–+++–"},
+{de:"Kochsalzlösung",en:"Saline solution",r:"+/+++++++++–+++++"},
+{de:"Kohlendioxid",en:"Carbon dioxide",r:"+++/++++–––+––––+"},
+{de:"Kohlenmonoxid, trocken",en:"Carbon monoxide, dry",r:"+++/++++–––––––––"},
+{de:"Kohlensäure",en:"Carbonic acid",r:"+++/+++++++++++++"},
+{de:"Kokosfett",en:"Coconut butter",r:"+++++o++–––+––––/"},
+{de:"Kokosnußöl",en:"Coconut oil",r:"++++–o+/+––+–+/+–"},
+{de:"Königswasser",en:"Aqua regia",r:"+oo+oo/o+++o+/ooo"},
+{de:"Kreosol (Methylbrenzcatechin)",en:"Creosol (methylcatechol)",r:"–++++o+o––––––––+"},
+{de:"Kupferacetat, wässrig",en:"Copper acetate, aqueous",r:"–+++o++o–––+–––––"},
+{de:"Kupferchlorid, wässrig",en:"Copper chloride, aqueous",r:"+oo++++++++++++o–"},
+{de:"Kupfercyanid",en:"Copper cyanide",r:"–+––++++++++++++–"},
+{de:"Kupfersalze",en:"Copper salt",r:"––––++++––––––––+"},
+{de:"Kupfersulfat, wässrig",en:"Copper sulphate, aqueous",r:"++/+++++++++++++–"},
+{de:"Lachgas",en:"Laughing gas",r:"+++++/+++++–+++++"},
+{de:"Lacke",en:"Lacquers",r:"+++++o+/–––+–––––"},
+{de:"Lacklösungsmittel",en:"Lacquer solvent",r:"++++oo+o–––––––––"},
+{de:"Lactam-Aminosäuren",en:"Lactam amino acid",r:"––––o/+o–––––––––"},
+{de:"Lavendelöl",en:"Lavender oil",r:"+++++o+o––––––––+"},
+{de:"Lebensmittelfette und -öle",en:"Food fats and oils",r:"+++++o+/+––+–+/+–"},
+{de:"Lebertran",en:"Cod liver oil",r:"+++++o+++++–+++++"},
+{de:"Leichtöl (Rohbenzol)",en:"Light oil (crude benzene)",r:"+++++o++–––––––––"},
+{de:"Leinöl",en:"Linseed oil",r:"+++++o+++++++++++"},
+{de:"Leuchtgas",en:"Illuminating gas",r:"+++++o++–––+––––+"},
+{de:"Linolsäure",en:"Linoleic acid",r:"+–––/o+/–––––––––"},
+{de:"Lithiumchlorid - wässrig",en:"Lithium chloride - aqueous",r:"–/–––++++––––++/–"},
+{de:"Lysol",en:"Lysol",r:"–+–––o+o+––+–//o–"},
+{de:"Magnesiumchlorid, wässrig",en:"Magnesium chloride, aqueous",r:"+/++++++++++++++–"},
+{de:"Magnesiumhydroxid, wässrig",en:"Magnesium hydroxide, aqueous",r:"––––++++++++++++–"},
+{de:"Magnesiumsalze",en:"Magnesium salt",r:"––––++++–––+––––+"},
+{de:"Magnesiumsulfat, wässrig",en:"Magnesium sulphate, aqueous",r:"++/++++++++++++++"},
+{de:"Maiskeimöl",en:"Corn germ oil",r:"+++++o+/+––+–+/+–"},
+{de:"Maisöl",en:"Corn oil",r:"+++++o++––––––––/"},
+{de:"Maleinsäure, wässrig",en:"Maleic acid, aqueous",r:"++/++++++++++++/+"},
+{de:"Maleinsäureanhydrid",en:"Maleic anhydride",r:"–+++o/+o–––––––––"},
+{de:"Manganchlorid - wässrig",en:"Manganese chloride - aqueous",r:"+/–––++++–––––++–"},
+{de:"Mangansulfat - wässrig",en:"Manganese sulphate - aqueous",r:"++–––++++––––+++–"},
+{de:"Melasse, Melassewürze",en:"Molasses, molasses flavouring",r:"–+–––++++––+–+++–"},
+{de:"Mercaptane",en:"Mercaptans",r:"–+–––o+o+––––/–+–"},
+{de:"Mersole (Alkansulfonsäurechloride)",en:"Mersols (alkane sulfonic acid chlorides)",r:"–/–––/–++–––––/––"},
+{de:"Mesityl-Oxid",en:"Mesitylene oxide",r:"––––o/+o–––––––––"},
+{de:"Methacrylsäure",en:"Methacrylic acid",r:"––––o/+o–––––––––"},
+{de:"Methan",en:"Methane",r:"+/+/+o++–––+––––+"},
+{de:"Methanol (Methylalkohol)",en:"Methanol (methyl alcohol)",r:"+/+/o++++++++++o+"},
+{de:"Methoxybutanol",en:"Methoxybutanol",r:"–+–––++++––+––+––"},
+{de:"Methyl Cellosolve",en:"Methyl cellosolve",r:"––––o/+o––––––––+"},
+{de:"Methylacetat",en:"Methyl acetate",r:"–/++o/+o+++++o/++"},
+{de:"Methylacetoacetat",en:"Methyl acetoacetate",r:"––––o/+o–––––––––"},
+{de:"Methylacrylat",en:"Methyl acrylate",r:"––––o/+o–––––––––"},
+{de:"Methylacrylsäure",en:"Methyl acrylic acid",r:"––––o/+o–––––––––"},
+{de:"Methylalkohol (Methanol)",en:"Methyl alcohol (methanol)",r:"+/+/o++++++++++o+"},
+{de:"Methylamin - wässrig",en:"Methylamine - aqueous",r:"–/–––/oo+––+–o+/–"},
+{de:"Methylanilin",en:"Methyl aniline",r:"––––/–+o–––+–––––"},
+{de:"Methylbenzoat",en:"Methyl benzoate",r:"––––+o+o–––––––––"},
+{de:"Methylbromid",en:"Methyl bromide",r:"––––+o+/––––––––/"},
+{de:"Methylbutylketon",en:"Methyl butyl ketone",r:"––––o++o+++–///+–"},
+{de:"Methylcarbonat",en:"Methyl carbonate",r:"––––+o+o–––––––––"},
+{de:"Methylcellulose",en:"Methyl cellulose",r:"––––o/+/–––––––––"},
+{de:"Methylchlorid",en:"Methyl chloride",r:"–/+++o+o–––+––––/"},
+{de:"Methylchloroform",en:"Methyl chloroform",r:"––––+o+o+++–+o//–"},
+{de:"Methylcyclopentan",en:"Methyl cyclopentane",r:"––––+o+o–––––––––"},
+{de:"Methyl-D-Bromid",en:"Methyl-D-bromide",r:"––––+–+o–––––––––"},
+{de:"Methylenchlorid",en:"Methylene chloride",r:"+//+/o+o++++/o///"},
+{de:"Methylendichlorid",en:"Methylene dichloride",r:"––––/o+o–––––––––"},
+{de:"Methylethylketon",en:"Methyl ethyl ketone",r:"–+–––/+o+––/–oo/–"},
+{de:"Methylethylketonperoxid",en:"Methyl ethyl ketone peroxide",r:"––––oo+o–––+–––––"},
+{de:"Methylformiat",en:"Methyl formate",r:"–++––/+o–––––––––"},
+{de:"Methylglykol",en:"Methyl glycol",r:"+–––o/–o++++++++–"},
+{de:"Methylisobutylketon, MIBK",en:"Methyl isobutyl ketone (MIBK)",r:"––––oo+o++++/+/+–"},
+{de:"Methylisopropylketon",en:"Methyl isopropyl ketone",r:"––––oo+o–––––––––"},
+{de:"Methylmethacrylat",en:"Methyl methacrylate",r:"––––oo+o+++–//o+–"},
+{de:"Methyloleat",en:"Methyl oleate",r:"––––+/+o–––––––––"},
+{de:"Methylsalicylat",en:"Methyl salicylate",r:"–––––/+o–––––––––"},
+{de:"Milch",en:"Milk",r:"+++++++++++++++++"},
+{de:"Milchsäure, heiß",en:"Lactic acid, hot",r:"+//++o+o+++++++/+"},
+{de:"Milchsäure, kalt",en:"Lactic acid, cold",r:"++/++++–+++++++/+"},
+{de:"Mineralöl",en:"Mineral oil",r:"+++++o++++++++++/"},
+{de:"Mineralwasser",en:"Mineral water",r:"+/–––+–++––+–+++–"},
+{de:"Monobrombenzol",en:"Mono bromobenzene",r:"+–––+o+o––––––––o"},
+{de:"Monoethanolamin",en:"Monoethanolamine",r:"––––o/+o––––––––+"},
+{de:"Monomethylanilin",en:"Mono methyl aniline",r:"+–––/–+o–––––––––"},
+{de:"Monomethylhydrazin",en:"Mono methylhydrazine",r:"–––––++/–––––––––"},
+{de:"Mononitrotoluol",en:"Mono nitrotoluol",r:"––––oo+o–––––––––"},
+{de:"Monovinylacetylen",en:"Mono vinylacetylene",r:"––––++++–––––––––"},
+{de:"Morpholin - rein",en:"Morpholine - pure",r:"–+–––//o+––+–++––"},
+{de:"Naphthalin",en:"Naphtalene",r:"+++++o+o–––+––––/"},
+{de:"Naphthensäuren",en:"Naphtenic acid",r:"+++++o+/–––+–––––"},
+{de:"Naptha",en:"Naptha",r:"––––+o+/++++/+/++"},
+{de:"Natriumacetat, wässrig",en:"Sodium acetate, aqueous",r:"–+/+o++o+++++++/+"},
+{de:"Natriumarsenate und Natriumarsenite",en:"Sodium arsenate and sodium arsenite",r:"–+–––++++–––––+––"},
+{de:"Natriumbenzoat - wässrig",en:"Sodium benzoate - aqueous",r:"–+–––++++––––+++–"},
+{de:"Natriumbicarbonat (Natron)",en:"Sodium bicarbonate (natron)",r:"++/++++++++++++/+"},
+{de:"Natriumbisulfat - wässrig",en:"Sodium bisulfate - aqueous",r:"+/–––++++––+–+++–"},
+{de:"Natriumbisulfit, wässrig",en:"Sodium bisulphite, aqueous",r:"+//++++++++–+++/+"},
+{de:"Natriumborat, wässrig (Borax)",en:"Sodium borate, aqueous (borax)",r:"–/+/++++–––––––––"},
+{de:"Natriumbromat - wässrig",en:"Sodium bromate - aqueous",r:"–+–––++++––––++/–"},
+{de:"Natriumbromid - wässrig",en:"Sodium bromide - aqueous",r:"–/–––++++––+–++o–"},
+{de:"Natriumcarbonat, wässrig (Soda)",en:"Sodium carbonate, aqueous (soda)",r:"+++/+++++++++++/+"},
+{de:"Natriumchloracetate",en:"Sodium chloroacetate",r:"–+–––++++–––––+––"},
+{de:"Natriumchlorat - wässrig",en:"Sodium chlorate - aqueous",r:"+/–––/+/+––+–++/–"},
+{de:"Natriumchlorid (Kochsalz) - wässrig",en:"Sodium chloride (common salt) - aqueous",r:"+/++–++++––+–+++–"},
+{de:"Natriumchlorit - wässrig",en:"Sodium chlorite - aqueous",r:"+/–––/+o+––––+/o–"},
+{de:"Natriumchromat - wässrig",en:"Sodium chromate - aqueous",r:"–/–––++/+––/–++o–"},
+{de:"Natriumcyanid, wässrig",en:"Sodium cyanide, aqueous",r:"–––/++++++++++++–"},
+{de:"Natriumdodecylbenzolsulfonat - wässrig",en:"Sodium dodecyl benzene sulfonate - aqueous",r:"–+–––+–++–––––/+–"},
+{de:"Natriumfluorid - wässrig",en:"Sodium fluoride - aqueous",r:"–+–––++++––––+++–"},
+{de:"Natriumglutamat - wässrig",en:"Sodium glutamate - aqueous",r:"–+–––++++–––––+––"},
+{de:"Natriumhydrogencarbonat - wässrig",en:"Sodium bicarbonate - aqueous",r:"–+–––++++––+–+++–"},
+{de:"Natriumhydroxid - wässrig",en:"Sodium hydroxide - aqueous",r:"++–––++o+––+–o++–"},
+{de:"Natriumhypochlorit (Chlorbleichlauge) - wässrig",en:"Sodium hypochlorite (chlorine bleach) - aqueous",r:"+/–––++o+––+–//o–"},
+{de:"Natriumjodid - wässrig",en:"Sodium iodide - aqueous",r:"–/–––++++––––++––"},
+{de:"Natriummercaptobenzthiazol",en:"Sodium mercaptobenzothiazole",r:"–+–––/+/+–––––+––"},
+{de:"Natriummetaphosphat (Calgon)",en:"Sodium metaphosphate (calgon)",r:"––––++++–––––––––"},
+{de:"Natriummetasilikat",en:"Sodium metasilicate",r:"––––++++–––––––––"},
+{de:"Natriumnitrat (Natronsalpeter)",en:"Sodium nitrate",r:"++++–++/+++++++/+"},
+{de:"Natriumnitrit - wässrig",en:"Sodium nitrite - aqueous",r:"++–––++++––+–+++–"},
+{de:"Natriumpentachlorphenolat",en:"Sodium pentachlorophenol",r:"–+–––+–++–––––++–"},
+{de:"Natriumperborat, wässrig",en:"Sodium perborate, aqueous",r:"–+––+++o+++–+++/+"},
+{de:"Natriumperoxid",en:"Sodium peroxide",r:"++––+++/++++++/++"},
+{de:"Natriumpersulfat - wässrig",en:"Sodium persulfate - aqueous",r:"–+–––++/+––––++o–"},
+{de:"Natriumphosphat",en:"Sodium phosphate",r:"–+/++++++++++++/–"},
+{de:"Natriumpropionat - wässrig",en:"Sodium propionate - aqueous",r:"–+–––+–++––––+++–"},
+{de:"Natriumpyrosulfit - wässrig",en:"Sodium pyrosulfite - aqueous",r:"–+–––+–/+–––––++–"},
+{de:"Natriumsalze",en:"Sodium salt",r:"+–––++++–––+––––+"},
+{de:"Natriumsilikat (Wasserglas)",en:"Sodium silicate (water glass)",r:"+++++++++++++++/+"},
+{de:"Natriumstannat - wässrig",en:"Sodium stannate - aqueous",r:"–+–––++++–––––+/–"},
+{de:"Natriumsulfat, wässrig",en:"Sodium sulphate, aqueous",r:"++/++++++++++++++"},
+{de:"Natriumsulfid, wässrig",en:"Sodium sulphide, aqueous",r:"+///++++–––+––––+"},
+{de:"Natriumsulfit",en:"Sodium sulphite",r:"++++++++–––+––––+"},
+{de:"Natriumtartrat - wässrig",en:"Sodium tartrate - aqueous",r:"–+–––++++–––––++–"},
+{de:"Natriumthiosulfat - wässrig",en:"Sodium thiosulfate - aqueous",r:"+/–––++++––+–+++–"},
+{de:"Natriumzinkat - wässrig",en:"Sodium zincate - aqueous",r:"–+–––+–/+––––––––"},
+{de:"Natronlauge (max. 10%/85°C)",en:"Caustic soda (max. 10%/85°C)",r:"++++o++/+–++–/––+"},
+{de:"Nekal BX - wässrig (Färbereinetzmittel)",en:"Nekal BX - aqueous (dyeing wetting agent)",r:"–+–––+/++–––––+––"},
+{de:"Neon",en:"Neon",r:"++++++++–––+––––+"},
+{de:"Nickelacetat",en:"Nickel acetate",r:"––––o++/–––+–––––"},
+{de:"Nickelchlorid",en:"Nickel chloride",r:"+/+++++++++++++/–"},
+{de:"Nickelsalze",en:"Nickel salt",r:"–/––++++–––+––––+"},
+{de:"Nickelsulfat",en:"Nickel sulphate",r:"++/++++++++++++/–"},
+{de:"Nitrobenzoesäuren - wässrig",en:"Nitrobenzoic acids - aqueous",r:"–+–––++++–––––++–"},
+{de:"Nitrobenzol",en:"Nitrobenzene",r:"++++/o+o++++++o//"},
+{de:"Nitroethan",en:"Nitroethane",r:"+–––o/+o–––––––––"},
+{de:"Nitromethan",en:"Nitromethane",r:"+–––o/+o++++++//–"},
+{de:"Nitropropan",en:"Nitropropane",r:"+–––o/+o–––––––––"},
+{de:"Nitrotoluole (o-, m-, p) - rein",en:"Nitrotoluene (o-, m-, p) - pure",r:"–+–––o//+––/–++o–"},
+{de:"Obstbaum-Karbolineum (Karbolineum)",en:"Fruit tree carbolineum (creosote)",r:"++–––/+/+–––––o+–"},
+{de:"Octachlortoluol",en:"Octachlorotoluene",r:"+–––+o+o–––––––––"},
+{de:"Octadekan",en:"Octadecane",r:"+–––+o++–––––––––"},
+{de:"Octan",en:"Octane",r:"+–––+o+/+++++++o–"},
+{de:"Octylalkohol",en:"Cetyl alcohol",r:"+–––+++/–––––––––"},
+{de:"Oleum (rauchende Schwefelsäure)",en:"Oleum (fuming sulphuric acid)",r:"+–oo+o+o+++–ooooo"},
+{de:"Oleumspiritus",en:"Oleum spirit",r:"+–––+o+/–––––––––"},
+{de:"Olivenöl",en:"Olive oil",r:"+++++o++–––+––––/"},
+{de:"Ölsäure",en:"Oleic acid",r:"+–––/o+o++++++/+/"},
+{de:"Ortho-Chlorethylbenzol",en:"Ortho-chloroethyl benzene",r:"+–––+o+o–––––––––"},
+{de:"Oxalsäure",en:"Oxalic acid",r:"+o/++++/++++++/++"},
+{de:"Ozon",en:"Ozone",r:"++/++++o++++++++o"},
+{de:"Palmitinsäure",en:"Palmitic acid",r:"+–––+o++++++++/+o"},
+{de:"Paraffin",en:"Paraffin",r:"+++++o++++++++++/"},
+{de:"Pentan (N-Pentan)",en:"Pentane (n-pentane)",r:"+++++o++–––––––––"},
+{de:"Perchlorsäure",en:"Perchloric acid",r:"––––––––///+/+/o+"},
+{de:"Peressigsäure - wässrig (6 %)",en:"Peracetic acid - aqueous (6%)",r:"–+–––++o+––––––o–"},
+{de:"Petroleumbenzin, Petrolether",en:"Petroleum benzine, petroleum ether",r:"++–––o+++––+–+/+–"},
+{de:"Pflanzenschutzmittel (Karbolineum)",en:"Pesticides (creosote)",r:"++–––/+/+–––––o+–"},
+{de:"Pflanzliche Öle",en:"Vegetable oils",r:"+++++o++–––+––––/"},
+{de:"Phenol - wässrig (gesättigt)",en:"Phenol - aqueous (saturated)",r:"++–––/+/+––/–/+o–"},
+{de:"Phenylbenzol",en:"Phenyl benzene",r:"+–––+o+o–––––––––"},
+{de:"Phenylethylether",en:"Phenyl ethyl ether",r:"––––oo+o–––––––––"},
+{de:"Phenylhydrazin",en:"Phenylhydrazine",r:"––––+o+o––––––––/"},
+{de:"Phosgen (flüssig)",en:"Phosgene (liquid)",r:"–+–––o+–+–––––//–"},
+{de:"Phosgen (gasförmig)",en:"Phosgene (gaseous)",r:"–+–––o+–+––––+o/–"},
+{de:"Phosphorchloride",en:"Phosphorus chlorides",r:"–/–––o+o+––+–++o–"},
+{de:"Phosphorsäure",en:"Phosphoric acid",r:"/oo++o+o+++++++o+"},
+{de:"Phosphorsäure (max. 6%/85°C)",en:"Phosphoric acid (max. 6%/85°C)",r:"+++++++–+++++++o+"},
+{de:"Phosphortrichlorid",en:"Phosphorus trichloride",r:"––––+++o++++++//–"},
+{de:"Pikrinsäure",en:"Picric acid",r:"–+––+/+o++++/++o+"},
+{de:"Pinen",en:"Pinene",r:"––––+o+/–––––––––"},
+{de:"Pinienöl, Kiefernöl",en:"Pine oil",r:"+++++o++–––––––––"},
+{de:"Piperidin",en:"Piperidine",r:"––––oo+o–––––––––"},
+{de:"Polyvinylacetat-Emulsion",en:"Polyvinyl acetate emulsion",r:"–––––++––––––––––"},
+{de:"Pottasche (Kaliumcarbonat) - wässrig",en:"Potash (potassium carbonate) - aqueous",r:"–+–––++++––+–o+/–"},
+{de:"Propan",en:"Propane",r:"+++++o++++++++o/+"},
+{de:"Propanol (Propylalkohol)",en:"Propanol (propyl alcohol )",r:"+++++++++++++++/+"},
+{de:"Propionitril",en:"Propionitrile",r:"––––+o++–––––––––"},
+{de:"Propylacetat",en:"Propyl acetate",r:"––––o/+o–––+–––––"},
+{de:"Propylen",en:"Propylene",r:"+++–+o+o–––+–––––"},
+{de:"Propylenglykol",en:"Propylene glycol",r:"++–––++++––+–++/–"},
+{de:"Propylenoxid",en:"Propylene oxide",r:"–+++oooo+++–//++–"},
+{de:"Propylnitrat",en:"Propyl nitrate",r:"––––o/+o–––––––––"},
+{de:"Pydraul-A 150",en:"Pydraul-A 150",r:"–+–––/–o+––––––+–"},
+{de:"Pydraul-A 200",en:"Pydraul-A 200",r:"–+–––/–o+––––––+–"},
+{de:"Pydraul-AG",en:"Pydraul-AG",r:"–+–––+–o+––––––+–"},
+{de:"Pydraul-F-9",en:"Pydraul-F-9",r:"–+–––+–o+––––––o–"},
+{de:"Pyranol",en:"Pyranol",r:"+++++o++–––––––––"},
+{de:"Pyridin",en:"Pyridine",r:"++++o/+o++++/o+o/"},
+{de:"Pyrrol",en:"Pyrrole",r:"––––oo+o–––––––––"},
+{de:"Quecksilber",en:"Mercury",r:"++/+++++++++++/++"},
+{de:"Quecksilberchlorid, wässrig",en:"Mercury chloride, aqueous",r:"–/––+++++++++++++"},
+{de:"Quecksilberdämpfe",en:"Mercury vapours",r:"++++++++–––––––––"},
+{de:"Quecksilbersalze - wässrig",en:"Mercury salts - aqueous",r:"–+–––++++––+–++o–"},
+{de:"Rapsöl",en:"Rapeseed oil",r:"++++–o+/+––+–+/+–"},
+{de:"Resorcin (50%)",en:"Resorcinol (50%)",r:"––––––––+++o+++o–"},
+{de:"Rizinusöl",en:"Castor oil",r:"+++++/++–––+––––+"},
+{de:"Saccharin (Süßstoff)",en:"Saccharin (sweetener)",r:"++++–+–++–––––+––"},
+{de:"Salicylsäure",en:"Salicylic acid",r:"––––+++/+++o++++–"},
+{de:"Salmiakgeist (Ammoniak - Wasser)",en:"Ammonia solution (ammonia - water)",r:"++++oooo+––+–+++–"},
+{de:"Salpetersäure",en:"Nitric acid",r:"/oo+/o+o+++o+/ooo"},
+{de:"Salpetersäure (max. 6%/85°C)",en:"Nitric acid (max. 6%/85°C)",r:"+++++++––––o–––––"},
+{de:"Salzsäure",en:"Hydrochloric acid",r:"/oo++o+o++++++oo+"},
+{de:"Salzsäure (max. 6%/85°C)",en:"Hydrochloric acid (max. 6%/85°C)",r:"+/o++++––––––––––"},
+{de:"Salzwasser",en:"Salt water",r:"+//+–+++–––+––––+"},
+{de:"Sauerstoff (gasförmig, 100-200°C)",en:"Oxygen (gaseous, 100-200°C)",r:"++++/o+o––––––––/"},
+{de:"Sauerstoff (gasförmig, kalt)",en:"Oxygen (gaseous, cold)",r:"+++++++/–––+––––+"},
+{de:"Schmelzkäse, 60% Fett i.Tr.",en:"Processed cheese, 60% fat",r:"++++++++––––––––+"},
+{de:"Schmieröle",en:"Lubricating oils",r:"++–––o+++––+–+++–"},
+{de:"Schwarzlauge",en:"Black liquor",r:"––––+/+/–––––––––"},
+{de:"Schwefel",en:"Sulphur",r:"++/++++o–––+––––/"},
+{de:"Schwefel, geschmolzen",en:"Sulphur, molten",r:"––––+o+o–––––––––"},
+{de:"Schwefelchlorid",en:"Sulphur chloride",r:"+–––+o+o–––+–––––"},
+{de:"Schwefeldioxid",en:"Sulphur dioxide",r:"–+/+o++o+++++++oo"},
+{de:"Schwefelhexafluorid (SF6)",en:"Sulphur hexafluoride (SF6)",r:"––––++++–––+–––––"},
+{de:"Schwefelige Säure - wässrig",en:"Sulphurous acid - aqueous",r:"–+–––++o+––+–++o–"},
+{de:"Schwefelkalk",en:"Sulphuric lime",r:"––––+++o–––––––––"},
+{de:"Schwefelkohlenstoff",en:"Carbon disulphide",r:"+++++o+o++++++o+/"},
+{de:"Schwefellauge",en:"Sulphur lye",r:"––––+/+/–––––––––"},
+{de:"Schwefelsäure",en:"Sulphuric acid",r:"/oo++o+o+++–++/o+"},
+{de:"Schwefelsäure - konzentriert (96 %)",en:"Sulphuric acid - concentrated (96%)",r:"/o–––o+o+––o–+oo–"},
+{de:"Schwefelsäure - wässrig (30 %)",en:"Sulphuric acid - aqueous (30%)",r:"/o–––++/+––/–++o–"},
+{de:"Schwefelsäure (max. 6%/85°C)",en:"Sulphuric acid (max. 6%/85°C)",r:"+//++o+––––/––––/"},
+{de:"Schwefeltrioxid, trocken",en:"Sulphur trioxide, dry",r:"––––+/+o–––+––––o"},
+{de:"Schwefelwasserstoff",en:"Hydrogen sulphide",r:"+//+o++o++++++o++"},
+{de:"Schweflige Säure",en:"Sulphurous acid",r:"+//++++o–––+––––+"},
+{de:"Seifenlösung - wässrig",en:"Soap solution - aqueous",r:"++–––/+/+––––+//–"},
+{de:"Silbernitrat",en:"Silver nitrate",r:"–+–++++o+++++++/–"},
+{de:"Silicatester",en:"Silicate ester",r:"––––+o+/–––––––––"},
+{de:"Silikonfette",en:"Silicone grease",r:"++++++++–––+––––+"},
+{de:"Silikonöle",en:"Silicone oil",r:"++++++++++++++++–"},
+{de:"Skydrol 500",en:"Skydrol 500",r:"–+–––++o+––+–––/–"},
+{de:"Skydrol 7000",en:"Skydrol 7000",r:"–+–––++o+––––––/–"},
+{de:"Soda (Natriumcarbonat)",en:"Soda (sodium carbonate)",r:"+++/+++++++++++/+"},
+{de:"Sojaöl",en:"Soybean oil",r:"+++++o++–––+–––––"},
+{de:"Sole (Kühlsolen)",en:"Brine (cooling brine)",r:"+/–––++++––+–+++–"},
+{de:"Speiseöl",en:"Edible oil",r:"++++–o+/+––+–+/+–"},
+{de:"Spindelöl",en:"Spindle oil",r:"++++–o+++––+–+++–"},
+{de:"Spirituosen - (abhängig von Inhalts- und Aromastoffen)",en:"Spirits - (dependent on ingredients and flavorings)",r:"++++–/–/+––+–++––"},
+{de:"Stannoethylmorpholin",en:"Stannoethylmorpholine",r:"––––o/+o–––––––––"},
+{de:"Stärkelösung - wässrig",en:"Starch solution - aqueous",r:"++–––++++––+–+++–"},
+{de:"Stearinsäure",en:"Stearic acid",r:"++––+/+/++++++++/"},
+{de:"Stickoxide (Nitrose Gase)",en:"Nitrogen oxides (nitrous gases)",r:"+/–––o/o+––+–/oo–"},
+{de:"Stickstoff",en:"Nitrogen",r:"++++++++–––+––––+"},
+{de:"Stickstofftetraoxid",en:"Nitrogen tetraoxide",r:"––––oo+o–––––––––"},
+{de:"Styrol",en:"Styrene",r:"++++oo+o++++++/+/"},
+{de:"Tallöl",en:"Tall oil",r:"++++–/–/+––––+++–"},
+{de:"Tannin (Gerbsäure)",en:"Tannin (tannic acid)",r:"+++++/+/+++++++++"},
+{de:"Teer (bituminös)",en:"Tar (bituminous)",r:"+++++o+/–––+–––––"},
+{de:"Teeröl, Carbolineum",en:"Tar oil, carbolineum",r:"+++++o++–––––––––"},
+{de:"Terpentinersatz",en:"White spirit",r:"++–––o+/+––+–+/+–"},
+{de:"Terpentinersatz, Testbenzin",en:"White spirit, petroleum spirit",r:"+–––––––+++–++/+–"},
+{de:"Terpentinöl",en:"Spirits of turpentine",r:"+++++o++–––+––––/"},
+{de:"Terpineol",en:"Terpineol",r:"+++++o+/–––––––––"},
+{de:"Tertiär-Butyl-Alkohol",en:"Tertiary butyl alcohol",r:"+++++/+/–––––––––"},
+{de:"Tertiär-Butyl-Mercaptan",en:"Tertiary butyl mercaptan",r:"––––+o+o–––––––––"},
+{de:"Tetrabrommethan",en:"Tetrabromomethane",r:"––––+o+o–––––––––"},
+{de:"Tetrabutyltitanat",en:"Tetrabutyltitanate",r:"––––+++/–––––––––"},
+{de:"Tetrachlorethan",en:"Tetrachloroethane",r:"+/++oo+o+++/o+o+o"},
+{de:"Tetrachlorethylen",en:"Tetrachloroethylene",r:"+++++o+o++++o+o+o"},
+{de:"Tetrachlorkohlenstoff",en:"Carbon tetrachloride",r:"+++++o+o++++++/oo"},
+{de:"Tetraethylblei",en:"Tetraethyl lead",r:"–+––+o+o++++++++–"},
+{de:"Tetrahydrofuran (THF)",en:"Tetrahydrofuran (THF)",r:"––––o/+o+++////+o"},
+{de:"Tetrahydronaphtalin (Tetralin)",en:"Tetrahydronaphthalene (tetralin)",r:"–+–––o+o+–––––o+–"},
+{de:"Thiophen - rein",en:"Thiophene - pure",r:"–+–––o+o+––/––/––"},
+{de:"Tieröl",en:"Animal oil",r:"+++++/++––––––––/"},
+{de:"Titantetrachlorid",en:"Titanium tetrachloride",r:"––––+o+/–––––––––"},
+{de:"Toluol",en:"Toluene",r:"++++oo+o++++++/+o"},
+{de:"Toluol - rein",en:"Toluene - pure",r:"++++–o+o+––+–/o+–"},
+{de:"Toluylendiisocyanat",en:"Toluylene diisocyanate",r:"––––o/+o–––––––––"},
+{de:"Transformatorenöl",en:"Transformer oil",r:"+++++o++–––+–––––"},
+{de:"Triacetin",en:"Triacetin",r:"––––o++/–––––––––"},
+{de:"Triarylphosphat",en:"Triaryl phosphate",r:"––––+++o–––––––––"},
+{de:"Tributoxyethylphosphat",en:"Tributoxyethylphosphate",r:"––––+++o–––––––––"},
+{de:"Tributylmercaptan",en:"Tributyl mercaptan",r:"––––+o+o–––––––––"},
+{de:"Tributylphosphat",en:"Tributyl phosphate",r:"––––o++o–––+––––+"},
+{de:"Trichloressigsäure",en:"Trichloroacetic acid",r:"–oo–o/+/+++/++/oo"},
+{de:"Trichlorethan",en:"Trichloroethane",r:"+++++o+o–––+––––/"},
+{de:"Trichlorethylen (Tri)",en:"Trichloroethylene (tri)",r:"+//–+o+o++++++o+o"},
+{de:"Triethanolamin",en:"Triethanolamine",r:"––––o/+o+++/++++–"},
+{de:"Trikresylphosphat",en:"Tricresyl phosphate",r:"–+–––o+o+––/–o/+–"},
+{de:"Trinitrotoluol",en:"Trinitrotoluol",r:"+–––/o+o–––––––––"},
+{de:"Trioctylphosphat",en:"Trioctyl phosphate",r:"––––o++o––––––––/"},
+{de:"Tripolyphosphat",en:"Tripolyphosphate",r:"––––/++o–––––––––"},
+{de:"Uranhexafluorid",en:"Uranium hexafluoride",r:"–+–––+/++–––––+o–"},
+{de:"Urin",en:"Urine",r:"+++++++++++++++++"},
+{de:"UV-Lack",en:"UV paint",r:"–––––+–o+––––––––"},
+{de:"Vaseline",en:"Vaseline",r:"+++++o++++++++++o"},
+{de:"Vaselinöl",en:"Vaseline oil",r:"++++–o+++––+–+++–"},
+{de:"Verdünnung",en:"Thinner",r:"++++––––+++–+++/–"},
+{de:"Vinylacetat",en:"Vinyl acetate",r:"––––––––++++/+oo–"},
+{de:"Vinylacetylen",en:"Vinyl acetylene",r:"––––++++–––––––––"},
+{de:"Vinylchlorid",en:"Vinyl chloride",r:"––––––––+++//+oo–"},
+{de:"Waschmittel (synth. Haushaltswaschmittel)",en:"Detergent (synth. household detergent)",r:"++++–++/+––––+//–"},
+{de:"Wasser",en:"Water",r:"+++++++++++++++++"},
+{de:"Wasser (schwer)",en:"Water, heavy",r:"+++–/++++–––––––+"},
+{de:"Wasser, entmineralisiert",en:"Water, demineralised",r:"+–––+++–++++++++–"},
+{de:"Wasserdampf (bis 150°C)",en:"Steam (up to 150°C)",r:"+++–o++o–––+––––o"},
+{de:"Wasserdampf / Sattdampf (über 150°C)",en:"Steam / saturated steam (exceeding 150°C)",r:"+++–oooo–––+–––––"},
+{de:"Wasserglas (Natriumsilikat)",en:"Water glass (sodium silicate)",r:"+++++++++++++++/+"},
+{de:"Wasserstoff",en:"Hydrogen",r:"+/++++++–––+––––+"},
+{de:"Wasserstoffperoxid (50%/25°C)",en:"Hydrogen peroxide (50%/25°C)",r:"++o–+o+o–––+––––o"},
+{de:"Wasserstoffperoxid (max. 6%/85°C)",en:"Hydrogen peroxide (max. 6%/85°C)",r:"++o–oo+o–––+––––o"},
+{de:"Wein (Weißwein, Rotwein)",en:"Wine (white wine, red wine)",r:"++++++++–––+––––+"},
+{de:"Weinessig (Essigsäure)",en:"Wine vinegar (acetic acid)",r:"+/–––//o+––+–+//–"},
+{de:"Weinsäure, wässrig",en:"Tartaric acid, aqueous",r:"+//++++++++++++++"},
+{de:"Whisky",en:"Whisky",r:"++++++++–––+––––+"},
+{de:"Xenon",en:"Xenon",r:"++++++++–––––––––"},
+{de:"Xylol",en:"Xylol",r:"+++++o+o++++++/+o"},
+{de:"Zeolit",en:"Zeolite",r:"––––++++–––––––––"},
+{de:"Zinkacetat",en:"Zinc acetate",r:"––––o++/–––––––––"},
+{de:"Zinkchlorid",en:"Zinc chloride",r:"+//++++++++o++++–"},
+{de:"Zinksalze",en:"Zinc salt",r:"––––++++––––––––+"},
+{de:"Zinksulfat",en:"Zinc sulphate",r:"–+––++++–––+–––––"},
+{de:"Zinnchlorid",en:"Tin chloride",r:"+o/+++++––––––––+"},
+{de:"Zitronensaft",en:"Lemon juice",r:"+++++++/+––+––++–"},
+{de:"Zitronensäure, wässrig",en:"Citric acid, aqueous",r:"+/+++++++++++++o+"},
+{de:"Zuckerlösungen",en:"Sugar solutions",r:"++–––+–++––+–+++–"},
+{de:"Zuckerrohrlösung",en:"Sugar cane solution",r:"+++++++++++––+–––"},
+{de:"Zuckerrübensaft",en:"Sugar beet juice",r:"++++++++++++–+–––"}
 ];
 
 // ─────────────────────────────────────────────
@@ -869,8 +1708,8 @@ var elProdImg  = document.getElementById('productImg');
 // TABS
 // ─────────────────────────────────────────────
 function switchTab(n) {
-  var titles = ['Abstrahlwinkel-Rechner', 'Beh\u00e4lter-Check', 'Flansch-Rechner'];
-  [1,2,3].forEach(function(i) {
+  var titles = ['Abstrahlwinkel-Rechner', 'Beh\u00e4lter-Check', 'Flansch-Rechner', 'Best\u00e4ndigkeitsliste'];
+  [1,2,3,4].forEach(function(i) {
     document.getElementById('tab'+i).classList.toggle('active', n === i);
   });
   document.querySelectorAll('.tab-btn').forEach(function(b, i) {
@@ -1498,6 +2337,170 @@ elDistIn.addEventListener('input', function() {
 
 document.getElementById('flPN').addEventListener('change', updateFlanschVorwaerts);
 document.getElementById('flDN').addEventListener('change', updateFlanschVorwaerts);
+
+// ─────────────────────────────────────────────
+// BESTÄNDIGKEIT FUNCTIONS (tab4)
+// ─────────────────────────────────────────────
+var BS_MATERIALS = [
+  'Sapphire ceramic®','1.4571 / 316Ti','Hastelloy C','Tantal',
+  'FKM (Viton)','EPDM','FFKM','NBR',
+  'PTFE','PFA','FEP','PEEK','ECTFE','PVDF','PP','PA','PE'
+];
+var BS_SELECTED = [];
+var bsActiveIdx = -1;
+
+function bsSearch(q) {
+  if (!q || q.length < 2) return [];
+  var ql = q.toLowerCase();
+  var results = [];
+  for (var i = 0; i < BESTAND_DATA.length && results.length < 10; i++) {
+    var s = BESTAND_DATA[i];
+    if (s.de.toLowerCase().indexOf(ql) >= 0 || s.en.toLowerCase().indexOf(ql) >= 0) {
+      results.push(s);
+    }
+  }
+  return results;
+}
+
+function bsRenderDropdown(results) {
+  var dd = document.getElementById('bsDropdown');
+  if (!results.length) { dd.classList.remove('open'); return; }
+  dd.innerHTML = results.map(function(s, i) {
+    return '<div class="bs-dd-item" data-idx="' + i + '" onmousedown="bsSelect(' + BESTAND_DATA.indexOf(s) + ')">' +
+      '<div class="bs-dd-name-de">' + s.de + '</div>' +
+      '<div class="bs-dd-name-en">' + s.en + '</div>' +
+    '</div>';
+  }).join('');
+  bsActiveIdx = -1;
+  dd.classList.add('open');
+}
+
+function bsSelect(dataIdx) {
+  var s = BESTAND_DATA[dataIdx];
+  if (!s) return;
+  // avoid duplicates
+  if (BS_SELECTED.some(function(x) { return x === s; })) return;
+  BS_SELECTED.push(s);
+  document.getElementById('bsInput').value = '';
+  document.getElementById('bsDropdown').classList.remove('open');
+  bsRenderTags();
+  bsCompute();
+}
+
+function bsRemoveTag(idx) {
+  BS_SELECTED.splice(idx, 1);
+  bsRenderTags();
+  bsCompute();
+}
+
+function bsRenderTags() {
+  var wrap = document.getElementById('bsTags');
+  wrap.innerHTML = BS_SELECTED.map(function(s, i) {
+    return '<span class="bs-tag">' + s.de +
+      ' <span class="bs-tag-x" onclick="bsRemoveTag(' + i + ')">✕</span></span>';
+  }).join('');
+}
+
+function bsCompute() {
+  var rc = document.getElementById('bsResultCard');
+  var ph = document.getElementById('bsPlaceholder');
+  var res = document.getElementById('bsResult');
+
+  if (!BS_SELECTED.length) {
+    rc.style.display = 'none';
+    ph.style.display = 'block';
+    return;
+  }
+  rc.style.display = 'block';
+  ph.style.display = 'none';
+
+  // For each of 17 materials, check all selected substances
+  var groupA = [], groupB = [], groupC = [], groupD = [];
+  BS_MATERIALS.forEach(function(mat, mi) {
+    var ratings = BS_SELECTED.map(function(s) { return s.r[mi]; });
+    var hasMinus = ratings.indexOf('–') >= 0;
+    var hasO = ratings.indexOf('o') >= 0;
+    var hasSlash = ratings.indexOf('/') >= 0;
+    if (hasMinus) {
+      groupC.push(mat);
+    } else if (hasSlash && !hasO) {
+      groupD.push(mat);
+    } else if (hasO) {
+      groupB.push(mat);
+    } else {
+      groupA.push(mat); // all '+'
+    }
+  });
+
+  function chips(arr, cls) {
+    if (!arr.length) return '<span class="bs-empty">—</span>';
+    return arr.map(function(m) {
+      return '<span class="bs-chip ' + cls + '">' + m + '</span>';
+    }).join('');
+  }
+
+  var subLabel = BS_SELECTED.length === 1
+    ? '<strong>' + BS_SELECTED[0].de + '</strong>'
+    : '<strong>' + BS_SELECTED.length + ' Substanzen</strong>';
+
+  res.innerHTML =
+    '<p style="font-size:0.78rem;color:#666;margin-bottom:16px;">Bewertung für ' + subLabel + '</p>' +
+    '<div class="bs-group">' +
+      '<div class="bs-group-title"><span class="bs-icon">✅</span> Vollständig beständig — <small style="font-weight:500;color:#555">+ für alle Substanzen</small></div>' +
+      '<div class="bs-chips">' + chips(groupA, 'ok') + '</div>' +
+    '</div>' +
+    '<div class="bs-group">' +
+      '<div class="bs-group-title"><span class="bs-icon">⚠️</span> Bedingt beständig — <small style="font-weight:500;color:#555">kein –, mind. 1× o</small></div>' +
+      '<div class="bs-chips">' + chips(groupB, 'part') + '</div>' +
+    '</div>' +
+    '<div class="bs-group">' +
+      '<div class="bs-group-title"><span class="bs-icon">❌</span> Nicht geeignet — <small style="font-weight:500;color:#555">mind. 1× –</small></div>' +
+      '<div class="bs-chips">' + chips(groupC, 'bad') + '</div>' +
+    '</div>' +
+    '<div class="bs-group">' +
+      '<div class="bs-group-title"><span class="bs-icon">ℹ️</span> Keine Information — <small style="font-weight:500;color:#555">nur / Einträge</small></div>' +
+      '<div class="bs-chips">' + chips(groupD, 'info') + '</div>' +
+    '</div>' +
+    '<p style="font-size:0.67rem;color:#bbb;margin-top:4px;">Quelle: VEGA Beständigkeitsliste 2025 — Angaben unverbindlich, keine Haftung.</p>';
+}
+
+// Input events for search
+(function() {
+  var input = document.getElementById('bsInput');
+  var dd = document.getElementById('bsDropdown');
+
+  input.addEventListener('input', function() {
+    var results = bsSearch(this.value);
+    bsRenderDropdown(results);
+    bsActiveIdx = -1;
+  });
+
+  input.addEventListener('keydown', function(e) {
+    var items = dd.querySelectorAll('.bs-dd-item');
+    if (e.key === 'ArrowDown') {
+      bsActiveIdx = Math.min(bsActiveIdx + 1, items.length - 1);
+      items.forEach(function(el, i) { el.classList.toggle('active', i === bsActiveIdx); });
+      e.preventDefault();
+    } else if (e.key === 'ArrowUp') {
+      bsActiveIdx = Math.max(bsActiveIdx - 1, 0);
+      items.forEach(function(el, i) { el.classList.toggle('active', i === bsActiveIdx); });
+      e.preventDefault();
+    } else if (e.key === 'Enter' && bsActiveIdx >= 0) {
+      var idx = parseInt(items[bsActiveIdx].dataset.idx);
+      var results = bsSearch(input.value);
+      if (results[idx]) bsSelect(BESTAND_DATA.indexOf(results[idx]));
+      e.preventDefault();
+    } else if (e.key === 'Escape') {
+      dd.classList.remove('open');
+    }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.bs-search-wrap')) {
+      dd.classList.remove('open');
+    }
+  });
+})();
 </script>
 
 </body>
